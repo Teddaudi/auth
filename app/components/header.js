@@ -18,8 +18,8 @@ const Header = () => {
             <div className="flex justify-between items-center px-10 h-14">
                 <div className="flex justify-between items-center gap-x-14">
                     <div className="w-40">
-                        <h2 className="text-md font-bold">Rabiul Islam</h2>
-                        <p className="text-gray-400 text-[12px]">Web Developer</p>
+                        <h2 className=" text-gray-400 text-[18px] ">Welcome</h2>
+                        <p className="text-md font-bold">Rabiul Islam</p>
                     </div>
                     {/* <button
                         id="toggle-button"

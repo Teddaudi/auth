@@ -1,10 +1,13 @@
-import Image from "next/image";
-import Dashboard from "./dashboard/page"
+"use client"
+import Users from "./users/page"
+import { createContext } from "react";
 
+
+const ThemeContext = createContext()
 export default function Home() {
   return (
-    <div>
-      <Dashboard/>
-    </div>
+    <ThemeContext.Provider>
+      <Users/>
+    </ThemeContext.Provider>
   );
 }
