@@ -16,9 +16,9 @@ const Page = () => {
     try {
       const userData = await axios.post('api/users/login', user)
       setAdmin(userData.data)
-      console.log("admin:", admin)
+      // console.log("admin:", admin)
       if (!admin) {
-        console.log("loginData:", admin)
+        // console.log("loginData:", admin)
       }
       router.push('/profile')
       // router.push('/dashboard')

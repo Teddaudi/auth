@@ -22,12 +22,14 @@ export async function POST(request: NextRequest) {
             email,
             password: hashedPassword
         })
+        // console.log("signUp:", newUSer)
         await newUSer.save()
         return NextResponse.json({
             message: "User created successfully",
             success: true
         })
     } catch (error: any) {
+        // console.log("SignupError:", error.message)
         return NextResponse.json({ error: error.message },
             { status: 500 }
         )
