@@ -50,11 +50,9 @@ const Page = () => {
             toast.error(error.message)
         }
     }
-    // console.log("Total:", totalAmount)
     useEffect(() => {
         getTransactions()
     }, [totalUsers])
-    // console.log("data:", userData)
     return (
         <div>
             <Header  />
