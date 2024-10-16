@@ -7,9 +7,10 @@ import HeaderUser from '../util/profileHeader';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import PaystackPop from '@paystack/inline-js'; 
+import PaystackPop from '@paystack/inline-js';
+import Image from 'next/image';
 
-const page = () => {
+const Page = () => {
     const [edit, setEdit] = useState(false)
     const [data, setData] = useState("")
     const [username, setUsername] = useState("")
@@ -20,7 +21,7 @@ const page = () => {
         address: "",
         investment: ""
     })
-    const [amount,setAmount]=useState("")
+    const [amount, setAmount] = useState("")
     const router = useRouter()
 
     function handleEdit() {
@@ -31,14 +32,14 @@ const page = () => {
             const res = await axios.get('/api/users/me');
             const userData = res.data.data;
 
-        setUser({
-            fullName: userData.fullName || '',
-            phone: userData.phone || '',
-            address: userData.address || '',
-            investment: userData.investment || ''
-        });
-        setEmail(userData.email);
-        setUsername(userData.username);
+            setUser({
+                fullName: userData.fullName || '',
+                phone: userData.phone || '',
+                address: userData.address || '',
+                investment: userData.investment || ''
+            });
+            setEmail(userData.email);
+            setUsername(userData.username);
         } catch (error: any) {
             toast.error("Error fetching user data:", error);
         }
@@ -67,23 +68,23 @@ const page = () => {
             console.error("Paystack can only be initialized in the browser.");
         }
     };
-    const getTransactions =async()=>{
-       try {
-        const data = await axios.get('/api/payment')
-        const transactions = data.data.data.data
-        const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
-            customerEmail: transaction.customer.email,
-            status: transaction.status,
-            paid_at: transaction.paid_at,
-            channel: transaction.channel,
-            customerPayment: transaction.amount
-        }));
-        
-        console.log("Transactions:",extractedData[0].customerEmail);
-       } catch (error:any) {
-        console.log("Failed to get the list", error.message)
-        toast.error("Failed to get the list", error.message)
-       }
+    const getTransactions = async () => {
+        try {
+            const data = await axios.get('/api/payment')
+            const transactions = data.data.data.data
+            const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
+                customerEmail: transaction.customer.email,
+                status: transaction.status,
+                paid_at: transaction.paid_at,
+                channel: transaction.channel,
+                customerPayment: transaction.amount
+            }));
+
+            console.log("Transactions:", extractedData[0].customerEmail);
+        } catch (error: any) {
+            console.log("Failed to get the list", error.message)
+            toast.error("Failed to get the list", error.message)
+        }
     }
     // getTransactions()
 
@@ -93,20 +94,22 @@ const page = () => {
 
     return (
         <>
-            <HeaderUser username={username}/>
+            <HeaderUser username={username} />
             <div className="container mx-auto p-4 ">
                 <div className="flex flex-wrap -mx-4 mt-10">
                     {/* Sidebar */}
                     <div className="w-full md:w-1/3 px-4 mb-4">
                         <div className="bg-white shadow rounded-lg p-4 mb-6">
                             <div className="flex flex-col items-center text-center">
-                                <img
+                                <Image
                                     src="https://bootdey.com/img/Content/avatar/avatar7.png"
                                     alt="Admin"
-                                    className="rounded-full w-32 h-32 object-cover"
+                                    className="rounded-full object-cover"
+                                    width={128} // Width in pixels
+                                    height={128} // Height in pixels
                                 />
                                 <div className="mt-3">
-                                    <h4 className="text-lg font-semibold">{!username ?"Loading...":username}</h4>
+                                    <h4 className="text-lg font-semibold">{!username ? "Loading..." : username}</h4>
                                     <p className="text-gray-500">{user.address}</p>
                                     <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">Account Balance: £ 200</div>
                                 </div>
@@ -141,7 +144,7 @@ const page = () => {
                                     <div className="col-span-1">
                                         <h6>Email</h6>
                                     </div>
-                                    <div className="col-span-2 text-gray-600">{!email ? "Loading...":email}</div>
+                                    <div className="col-span-2 text-gray-600">{!email ? "Loading..." : email}</div>
                                 </div>
                                 <hr className="my-2" />
                                 <div className="grid grid-cols-3 gap-4">
@@ -246,7 +249,7 @@ const page = () => {
                                                     type="number"
                                                     name="amount"
                                                     value={amount}
-                                                    onChange={(e) => setAmount(e.target.value )}
+                                                    onChange={(e) => setAmount(e.target.value)}
                                                     placeholder="Enter amount"
                                                     className="w-full px-3 ml-3 py-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                                 />
@@ -275,4 +278,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

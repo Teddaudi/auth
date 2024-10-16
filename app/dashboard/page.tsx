@@ -14,7 +14,7 @@ interface Transaction {
     channel: string;
     customerPayment: number;
 }
-const page = () => {
+const Page = () => {
     const [totalUsers, setTotalUsers] = useState<number>(0);
     const [userData, setUserData] = useState<Transaction[]>([]);
 
@@ -148,4 +148,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

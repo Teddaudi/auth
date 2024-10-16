@@ -4,26 +4,27 @@ import axios from 'axios';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface HeaderUserProps {
     username: string; // Define the type for the username prop
 }
-const HeaderUser: React.FC<HeaderUserProps> = ({username}) => {
+const HeaderUser: React.FC<HeaderUserProps> = ({ username }) => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const router = useRouter()
-    const logOut = async()=>{
+    const logOut = async () => {
         try {
-          await axios.get('/api/users/logout')
-          toast.success('Logout successful')
-          router.push('/signin')
-        } catch (error:any) {
+            await axios.get('/api/users/logout')
+            toast.success('Logout successful')
+            router.push('/signin')
+        } catch (error: any) {
             toast.error(error.message)
         }
     }
     // Function to handle clicks outside of the dropdown to close it
     useEffect(() => {
-        const handleOutsideClick = (e:any) => {
+        const handleOutsideClick = (e: any) => {
             if (!e.target.closest('.dropdown-container')) {
                 setIsDropdownOpen(false);
             }
@@ -56,10 +57,13 @@ const HeaderUser: React.FC<HeaderUserProps> = ({username}) => {
 
                 <ul className="flex items-center gap-5">
                     <li className="relative dropdown-container" onClick={toggleUserDropdown}>
-                        <img
+                        <Image
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
                             src="https://bootdey.com/img/Content/avatar/avatar7.png"
                             alt="User avatar"
+                            width={32}
+                            height={32}
+                            objectFit="cover"
                         />
                         <ul
                             className={`absolute ${isDropdownOpen ? 'block' : 'hidden'} bg-white right-0 top-12 w-28 rounded shadow-md z-20`}

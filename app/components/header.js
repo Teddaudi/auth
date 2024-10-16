@@ -1,5 +1,6 @@
 "use client"
 import axios from 'axios';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -57,10 +58,12 @@ const Header = () => {
                         </a>
                     </li> */}
                     <li onClick={toggleUserDropdown}>
-                        <img
+                        <Image
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
                             src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
+                            alt="Profile Image"
+                            width={32} // Adjust width to match the size of the image (e.g., 8 * 4 = 32)
+                            height={32} // Adjust height to match the size of the image (e.g., 8 * 4 = 32)
                         />
                         <ul className={`absolute ${isDropdownOpen ? 'block' : 'hidden'} bg-white right-4 top-14 w-28 rounded shadow-md`}>
 
