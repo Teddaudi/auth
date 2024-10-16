@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     try {
         const userId = await getDataFromToken(request);
         const user = await User.findOne({ _id: userId }).select("-password");
+        console.log("userMe:", user.isAdmin)
         return NextResponse.json({
             message: "User found",
             data: user
@@ -24,7 +25,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json();
-        console.log("reqBody:", reqBody)
         const userId = await getDataFromToken(request);
         const { fullName, phone, address, investment } = reqBody;
 
@@ -64,7 +64,6 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const reqBody = await request.json();
-        console.log("reqBody:", reqBody)
         const userId = await getDataFromToken(request);
         const { fullName, phone, address, investment } = reqBody;
 

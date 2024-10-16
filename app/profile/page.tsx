@@ -7,6 +7,7 @@ import HeaderUser from '../util/profileHeader';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import PaystackPop from '@paystack/inline-js'; 
 
 const page = () => {
     const [edit, setEdit] = useState(false)
@@ -19,6 +20,7 @@ const page = () => {
         address: "",
         investment: ""
     })
+    const [amount,setAmount]=useState("")
     const router = useRouter()
 
     function handleEdit() {
@@ -35,22 +37,56 @@ const page = () => {
             address: userData.address || '',
             investment: userData.investment || ''
         });
-        console.log("user:",user)
-        setUsername(userData.username);
         setEmail(userData.email);
+        setUsername(userData.username);
         } catch (error: any) {
             toast.error("Error fetching user data:", error);
         }
     };
     const editUserData = async () => {
-        console.log("updatedUser:", user)
         try {
             await axios.put('/api/users/me', user);
-            router.refresh();
+            handleEdit();
         } catch (error: any) {
             toast.error("Failed to update", error.message)
         }
     }
+    const initializePay = async () => {
+        if (typeof window !== 'undefined') {
+            const PaystackPop = (await import('@paystack/inline-js')).default;
+            try {
+                const popup = new PaystackPop();
+                const pay = await axios.post('/api/payment', { email, amount });
+                const access_code = pay.data.data.access_code;
+                popup.resumeTransaction(access_code);
+                toast.success("Payment initialised successfully");
+            } catch (error: any) {
+                toast.error("Payment failed", error.message);
+            }
+        } else {
+            console.error("Paystack can only be initialized in the browser.");
+        }
+    };
+    const getTransactions =async()=>{
+       try {
+        const data = await axios.get('/api/payment')
+        const transactions = data.data.data.data
+        const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
+            customerEmail: transaction.customer.email,
+            status: transaction.status,
+            paid_at: transaction.paid_at,
+            channel: transaction.channel,
+            customerPayment: transaction.amount
+        }));
+        
+        console.log("Transactions:",extractedData[0].customerEmail);
+       } catch (error:any) {
+        console.log("Failed to get the list", error.message)
+        toast.error("Failed to get the list", error.message)
+       }
+    }
+    // getTransactions()
+
     useEffect(() => {
         fetchData()
     }, [data])
@@ -70,7 +106,7 @@ const page = () => {
                                     className="rounded-full w-32 h-32 object-cover"
                                 />
                                 <div className="mt-3">
-                                    <h4 className="text-lg font-semibold">{username}</h4>
+                                    <h4 className="text-lg font-semibold">{!username ?"Loading...":username}</h4>
                                     <p className="text-gray-500">{user.address}</p>
                                     <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">Account Balance: £ 200</div>
                                 </div>
@@ -105,7 +141,7 @@ const page = () => {
                                     <div className="col-span-1">
                                         <h6>Email</h6>
                                     </div>
-                                    <div className="col-span-2 text-gray-600">{email}</div>
+                                    <div className="col-span-2 text-gray-600">{!email ? "Loading...":email}</div>
                                 </div>
                                 <hr className="my-2" />
                                 <div className="grid grid-cols-3 gap-4">
@@ -181,7 +217,7 @@ const page = () => {
                                             Deposit
                                         </h1>
                                         <p>Choose the cryptocurrency to invest</p>
-                                        <form className="w-full max-w-sm mx-auto  p-4 ">
+                                        <div className="w-full max-w-sm mx-auto  p-4 ">
                                             <ul className="list-none">
                                                 <li className="flex items-center py-2">
                                                     <label className="flex items-center cursor-pointer w-full">
@@ -209,6 +245,8 @@ const page = () => {
                                                 <input
                                                     type="number"
                                                     name="amount"
+                                                    value={amount}
+                                                    onChange={(e) => setAmount(e.target.value )}
                                                     placeholder="Enter amount"
                                                     className="w-full px-3 ml-3 py-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                                 />
@@ -218,11 +256,12 @@ const page = () => {
                                                 <button
                                                     type="submit"
                                                     className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
+                                                    onClick={initializePay}
                                                 >
                                                     Pay
                                                 </button>
                                             </div>
-                                        </form>
+                                        </div>
 
 
                                     </div>

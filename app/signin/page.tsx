@@ -10,12 +10,19 @@ const page = () => {
     email: "",
     password: ""
   })
+  const [admin, setAdmin] = useState()
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const onLogin = async () => {
     try {
-      await axios.post('api/users/login', user)
-      toast.success("Login successful")
+      const userData = await axios.post('api/users/login', user)
+      setAdmin(userData.data)
+      console.log("admin:", admin)
+      if (!admin) {
+        console.log("loginData:", admin)
+      }
       router.push('/profile')
+      // router.push('/dashboard')
+      toast.success("Login successful")
     } catch (error: any) {
       toast.error(error.message)
     }
@@ -41,16 +48,16 @@ const page = () => {
                 <div>
                   <label htmlFor="email" className="block mb-2 text-sm font-medium  ">Your email</label>
                   <input type="email" name="email" value={user.email}
-                  onChange={(e)=>setUser({ ...user, email: e.target.value })}
-                  id="email" className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
+                    onChange={(e) => setUser({ ...user, email: e.target.value })}
+                    id="email" className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
                 </div>
                 <div>
                   <label htmlFor="password" className="block mb-2 text-sm font-medium  ">Password</label>
-                  <input type="password" name="password" 
-                  value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })}
-                  id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+                  <input type="password" name="password"
+                    value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })}
+                    id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
                 </div>
-                <button type="submit" className="w-full text-white bg-blue-400 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" onClick={onLogin}>{buttonDisabled ? "No Sign In": "Sign In"}</button>
+                <button type="submit" className="w-full text-white bg-blue-400 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" onClick={onLogin}>{buttonDisabled ? "No Sign In" : "Sign In"}</button>
                 <p className="text-sm font-light ">
                   Don't have an account? <a href="/signup" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up here</a>
                 </p>

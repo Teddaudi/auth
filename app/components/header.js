@@ -1,25 +1,45 @@
 "use client"
-import React, { useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 const Header = () => {
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    const toggleSidebar = () => {
-        setIsSidebarCollapsed(prev => !prev);
-    };
+    const [username, setUsername] = useState("")
+    const router = useRouter()
 
     const toggleUserDropdown = () => {
         setIsDropdownOpen(prev => !prev);
     };
-
+    const fetchData = async () => {
+        try {
+            const res = await axios.get('/api/users/me');
+            const userData = res.data.data;
+            setUsername(userData.username);
+        } catch (error) {
+            toast.error("Error fetching user data:", error);
+        }
+    };
+    const logOut = async () => {
+        try {
+            await axios.get('/api/users/logout')
+            toast.success('Logout successful')
+            router.push('/signin')
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+    useEffect(() => {
+        fetchData()
+    }, [])
     return (
         <header className="h-14 bg-gray-100 top-0 w-full fixed shadow" style={{ zIndex: 99999 }}>
             <div className="flex justify-between items-center px-10 h-14">
                 <div className="flex justify-between items-center gap-x-14">
                     <div className="w-40">
                         <h2 className=" text-gray-400 text-[18px] ">Welcome</h2>
-                        <p className="text-md font-bold">Rabiul Islam</p>
+                        <p className="text-md font-bold">{!username ? "Loading..." : username}</p>
                     </div>
                     {/* <button
                         id="toggle-button"
@@ -43,9 +63,9 @@ const Header = () => {
                             alt=""
                         />
                         <ul className={`absolute ${isDropdownOpen ? 'block' : 'hidden'} bg-white right-4 top-14 w-28 rounded shadow-md`}>
-                           
+
                             <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
-                                <a className="block px-5 py-2" href="#">Logout</a>
+                                <a className="block px-5 py-2" onClick={logOut}>Logout</a>
                             </li>
                         </ul>
                     </li>

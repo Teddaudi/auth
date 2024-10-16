@@ -8,7 +8,6 @@ connect()
 export async function PUT(request:NextRequest) {
     try {
         const reqBody = await request.json()
-        console.log("reqBody:",reqBody)
         const {fullName,phone,address,investment} =reqBody;
         const userUpdate = new User({
             fullName,
