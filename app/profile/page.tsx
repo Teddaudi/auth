@@ -27,11 +27,11 @@ const Page = () => {
     })
     const [amount, setAmount] = useState("")
     const [currency, setCurrency] = useState("EUR")
-    const [balance,setBalance]=useState(0)
+    const [balance, setBalance] = useState()
     const router = useRouter()
 
 
-    
+
     async function startPay() {
         const data = { currency, amount, email, name: username };
         try {
@@ -108,12 +108,10 @@ const Page = () => {
         }
     }
 
-    const balFun=async()=>{
+    const balFun = async () => {
         try {
             const res = await axios.get('/api/users/me');
             setBalance(res.data.data.investment)
-            console.log("balance:", res.data.data.investment
-            )
         } catch (error: any) {
             console.log(error.message)
         }
@@ -146,7 +144,9 @@ const Page = () => {
                                 <div className="mt-3">
                                     <h4 className="text-lg font-semibold">{!username ? "Loading..." : username}</h4>
                                     <p className="text-gray-500">{user.address}</p>
-                                    <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">Account Balance: £ {balance}</div>
+                                    <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">
+                                        Account Balance: £ {balance === "Provide your investment" ? 0 : balance}
+                                    </div>
                                 </div>
                             </div>
                         </div>
