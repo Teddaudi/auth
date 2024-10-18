@@ -29,7 +29,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/profile/page.js", "app/util/editUser.js", "app/components/header.js"  ],
+, "app/profile/page.js", "app/util/editUser.js", "app/components/header.js", "app/api/coinbase/route.Js"  ],
   "exclude": [
     "node_modules"
   ]

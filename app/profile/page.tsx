@@ -9,9 +9,13 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import PaystackPop from '@paystack/inline-js';
 import Image from 'next/image';
+import UploadId from '../util/uploadId'
+import Pay from "../components/pay"
+
 
 const Page = () => {
     const [edit, setEdit] = useState(false)
+    const [verificationStatus, setVerificationStatus] = useState(false)
     const [data, setData] = useState("")
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
@@ -22,8 +26,23 @@ const Page = () => {
         investment: ""
     })
     const [amount, setAmount] = useState("")
+    const [currency, setCurrency] = useState("EUR")
+    const [balance,setBalance]=useState(0)
     const router = useRouter()
 
+
+    
+    async function startPay() {
+        const data = { currency, amount, email, name: username };
+        try {
+            const response = await axios.post("/api/coinbase", data)
+            const url = response.data.charge.hosted_url;
+            window.open(url, '_blank')
+        } catch (error: any) {
+            toast.error(error.message)
+        }
+
+    }
     function handleEdit() {
         setEdit(prev => !prev)
     }
@@ -40,6 +59,8 @@ const Page = () => {
             });
             setEmail(userData.email);
             setUsername(userData.username);
+            // setAmount(userData)
+            setBalance(res.data.data.investment)
         } catch (error: any) {
             toast.error("Error fetching user data:", error);
         }
@@ -86,9 +107,23 @@ const Page = () => {
             toast.error("Failed to get the list", error.message)
         }
     }
-    // getTransactions()
 
+    const balFun=async()=>{
+        try {
+            const res = await axios.get('/api/users/me');
+            setBalance(res.data.data.investment)
+            console.log("balance:", res.data.data.investment
+            )
+        } catch (error: any) {
+            console.log(error.message)
+        }
+    }
+    function statusFun() {
+        console.log("Clicked")
+        setVerificationStatus(prev => !prev)
+    }
     useEffect(() => {
+        balFun()
         fetchData()
     }, [data])
 
@@ -111,7 +146,7 @@ const Page = () => {
                                 <div className="mt-3">
                                     <h4 className="text-lg font-semibold">{!username ? "Loading..." : username}</h4>
                                     <p className="text-gray-500">{user.address}</p>
-                                    <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">Account Balance: £ 200</div>
+                                    <div className="bg-green-300 rounded-lg cursor-pointer hover:bg-green-600 text-white text-sm font-semibold p-2">Account Balance: £ {balance}</div>
                                 </div>
                             </div>
                         </div>
@@ -123,7 +158,10 @@ const Page = () => {
                                         <MdOutlineVerifiedUser size={20} color='gray' className="mr-2" />
                                         Verification Status
                                     </h6>
-                                    <div className="text-white bg-red-500 px-1 text-xs">Not verified</div>
+                                    <div className="text-white bg-red-500 px-1 text-xs cursor-pointer" title="Upload your ID"
+                                        onClick={statusFun}
+                                    >{!verificationStatus && "Not verified"}</div>
+                                    {verificationStatus && <UploadId />}
                                 </li>
                             </ul>
                         </div>
@@ -219,8 +257,8 @@ const Page = () => {
                                         <h1 className="flex items-center mb-3 font-bold">
                                             Deposit
                                         </h1>
-                                        <p>Choose the cryptocurrency to invest</p>
-                                        <div className="w-full max-w-sm mx-auto  p-4 ">
+                                        <p className='mb-2'>Choose the cryptocurrency to invest</p>
+                                        {/* <div className="w-full max-w-sm mx-auto  p-4 ">
                                             <ul className="list-none">
                                                 <li className="flex items-center py-2">
                                                     <label className="flex items-center cursor-pointer w-full">
@@ -264,9 +302,28 @@ const Page = () => {
                                                     Pay
                                                 </button>
                                             </div>
+                                        </div> */}
+                                        {/* <Pay setCurrency={setCurrency} /> */}
+                                        <div className='flex  py-2 my-4'>
+                                            <div className='text-sm  justify-center text-center font-bold p-3'>{currency}</div>
+                                            <input
+                                                type="number"
+                                                name="amount"
+                                                value={amount}
+                                                onChange={(e) => setAmount(e.target.value)}
+                                                placeholder="Enter amount"
+                                                className="w-30 p-3 ml- border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                            />
                                         </div>
-
-
+                                        <div className="mt-6">
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
+                                                onClick={startPay}
+                                            >
+                                                Pay
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
