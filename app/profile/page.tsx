@@ -46,13 +46,13 @@ const Page = () => {
     const [profileImage, setProfileImage] = useState("")
     const [modal, setModal] = useState(false)
     // Handle file selection
-    const handleFileChange = (e, setImage) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImage(file);
-            setEdit(prev => !prev)
-        }
-    };
+    // const handleFileChange = (e, setImage) => {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         setImage(file);
+    //         setEdit(prev => !prev)
+    //     }
+    // };
     async function Test() {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
