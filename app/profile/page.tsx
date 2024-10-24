@@ -98,7 +98,7 @@ const Page = () => {
             // setAmount(userData)
             setBalance(res.data.data.investment)
         } catch (error: any) {
-            toast.error("Error fetching user data:", error);
+            console.log("Error fetching user data:", error);
         }
     };
     const editUserData = async () => {
@@ -106,7 +106,7 @@ const Page = () => {
             await axios.put('/api/users/me', user);
             setEdit(false)
         } catch (error: any) {
-            toast.error("Failed to update", error.message)
+            console.log("Failed to update", error.message)
         }
     }
     // const initializePay = async () => {
@@ -149,7 +149,7 @@ const Page = () => {
             const res = await axios.get('/api/users/me');
             setBalance(res.data.data.investment)
         } catch (error: any) {
-            toast.error(error.message)
+            console.log(error.message)
         }
     }
     function statusFun() {
@@ -172,7 +172,7 @@ const Page = () => {
             await navigator.clipboard.writeText(wallet);
             alert('Text copied to clipboard!');
         } catch (error) {
-            console.error('Failed to copy text:', error);
+             console.log('Failed to copy text:', error);
         }
     };
     async function handleWallet() {
@@ -180,28 +180,28 @@ const Page = () => {
             
             setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
         } catch (error: any) {
-            return toast.error(error.message)
+            return  console.log(error.message)
         }
     }
     async function handleWalletEth() {
         try {
             setWallet("0x84E374B803491D9fC6a71889E25a16f37B6747Ed")
         } catch (error: any) {
-            return toast.error(error.message)
+            return  console.log(error.message)
         }
     }
     async function handleWalletLtc() {
         try {
             setWallet("ltc1qa2c6wc39utg246rmt38x62src8dct3tvykg3me")
         } catch (error: any) {
-            return toast.error(error.message)
+            return  console.log(error.message)
         }
     }
     async function handleWalletUSDT() {
         try {
             setWallet("TNeyjudVdkxjukNYABqATzne58aTmXnu9U")
         } catch (error: any) {
-            return toast.error(error.message)
+            return console.log(error.message)
         }
     }
     const editImage = async () => {
@@ -236,10 +236,10 @@ const Page = () => {
             if (response.data.success) {
                 setImage(response.data.image); // Set the Base64 image string
             } else {
-                toast.error(response.data.message);
+                 console.log(response.data.message);
             }
         } catch (error: any) {
-            toast.error(error.message);
+             console.log(error.message);
         }
     };
     const handleClose = async () => {

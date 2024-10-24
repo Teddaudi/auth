@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import https from 'https';
 import { getDataFromToken } from "../../../../helpers/getDataFromToken";
 import User from "../../../../models/userModel";
-
+import Verification from "../../../../models/verificationModel"
 
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -56,11 +56,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
     idName = apiRes.data.fullName[0].value;
     // console.log(apiRes.success)
     if (apiRes.success) {
-      await User.findByIdAndUpdate(
+   const user =   await User.findByIdAndUpdate(
         userId,
         { idVerification: true },
         { new: true }
       );
+      await Verification.create({
+        email:user.email,
+        idVerification:true,
+        image:user.image
+      })
       // console.log("User ID verification status:", updatedUser.idVerification)
       return NextResponse.json({
         message: "Verification successful",
