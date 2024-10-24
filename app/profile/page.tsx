@@ -2,22 +2,30 @@
 import React, { useEffect, useState } from 'react'
 import './profile.css'
 import { MdOutlineVerifiedUser } from "react-icons/md";
+import { FaRegPenToSquare } from "react-icons/fa6";
 import EditUser from '../util/editUser';
 import HeaderUser from '../util/profileHeader';
 import axios from 'axios';
-import toast from 'react-hot-toast';
+// import {toast} from 'react-hot-toast';
+// import { toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import PaystackPop from '@paystack/inline-js';
 import Image from 'next/image';
 import UploadId from '../util/uploadId'
-import Pay from "../components/pay"
+import { IoCopyOutline } from "react-icons/io5";
+import Modal from "../../lib/Modal"
+import avatarImg from "../../images/avatar.png"
 
 
 const Page = () => {
     const [edit, setEdit] = useState(false)
+    const [id1, setId1] = useState("")
+    const [id2, setId2] = useState("")
     const [verificationStatus, setVerificationStatus] = useState(false)
+    const [verify, setVerify] = useState("Not verified")
     const [data, setData] = useState("")
     const [username, setUsername] = useState("")
+    const [image, setImage] = useState("")
     const [email, setEmail] = useState("")
     const [user, setUser] = useState({
         fullName: "",
@@ -26,10 +34,38 @@ const Page = () => {
         investment: ""
     })
     const [amount, setAmount] = useState("")
-    const [currency, setCurrency] = useState("EUR")
+    const [currency, setCurrency] = useState("£")
     const [balance, setBalance] = useState()
     const router = useRouter()
-
+    const [documentImage, setDocumentImage] = useState(null);
+    const [faceImage, setFaceImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [response, setResponse] = useState(null);
+    const [editId, setEditId] = useState(false)
+    const [wallet, setWallet] = useState("")
+    const [profileImage, setProfileImage] = useState("")
+    const [modal, setModal] = useState(false)
+    // Handle file selection
+    const handleFileChange = (e, setImage) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            setEdit(prev => !prev)
+        }
+    };
+    async function Test() {
+        await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
+        // console.log("clicked")
+    }
+    // Convert file to base64
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = (error) => reject(error);
+        });
+    };
 
 
     async function startPay() {
@@ -44,7 +80,7 @@ const Page = () => {
 
     }
     function handleEdit() {
-        setEdit(prev => !prev)
+        setEdit(false)
     }
     const fetchData = async () => {
         try {
@@ -68,7 +104,7 @@ const Page = () => {
     const editUserData = async () => {
         try {
             await axios.put('/api/users/me', user);
-            handleEdit();
+            setEdit(false)
         } catch (error: any) {
             toast.error("Failed to update", error.message)
         }
@@ -101,9 +137,9 @@ const Page = () => {
                 customerPayment: transaction.amount
             }));
 
-            console.log("Transactions:", extractedData[0].customerEmail);
+            // console.log("Transactions:", extractedData[0].customerEmail);
         } catch (error: any) {
-            console.log("Failed to get the list", error.message)
+            // console.log("Failed to get the list", error.message)
             toast.error("Failed to get the list", error.message)
         }
     }
@@ -113,21 +149,147 @@ const Page = () => {
             const res = await axios.get('/api/users/me');
             setBalance(res.data.data.investment)
         } catch (error: any) {
-            console.log(error.message)
+            toast.error(error.message)
         }
     }
     function statusFun() {
-        console.log("Clicked")
-        setVerificationStatus(prev => !prev)
+        // console.log("Clicked")
+        setVerificationStatus(true)
+
     }
+    // async function test() {
+    //     console.log("test")
+    //     try {
+    //         const binance = await axios.post('/api/binance')
+    //         console.log("binance:", binance)
+    //     } catch (error: any) {
+    //         console.log(error.message)
+    //     }
+    // }
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(wallet);
+            alert('Text copied to clipboard!');
+        } catch (error) {
+            console.error('Failed to copy text:', error);
+        }
+    };
+    async function handleWallet() {
+        try {
+            Test()
+            setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
+        } catch (error: any) {
+            return toast.error(error.message)
+        }
+    }
+    async function handleWalletEth() {
+        try {
+            setWallet("0x84E374B803491D9fC6a71889E25a16f37B6747Ed")
+        } catch (error: any) {
+            return toast.error(error.message)
+        }
+    }
+    async function handleWalletLtc() {
+        try {
+            setWallet("ltc1qa2c6wc39utg246rmt38x62src8dct3tvykg3me")
+        } catch (error: any) {
+            return toast.error(error.message)
+        }
+    }
+    async function handleWalletUSDT() {
+        try {
+            setWallet("TNeyjudVdkxjukNYABqATzne58aTmXnu9U")
+        } catch (error: any) {
+            return toast.error(error.message)
+        }
+    }
+    const editImage = async () => {
+        try {
+            // console.log("clicked")
+            setModal(prev => !prev)
+            // toast.success("Good!")
+        } catch (error: any) {
+            console.log("error:", error.message)
+        }
+    }
+    const handleImageChange = async (e: { preventDefault: () => void; }) => {
+        try {
+            e.preventDefault()
+
+            const data = new FormData()
+            data.set('file', profileImage)
+            const res = await fetch('/api/users/edit/image', {
+                method: 'PUT',
+                body: data
+            });
+            if (!res.ok) throw new Error(await res.text())
+            setModal(false);
+            toast.success("Upload successful!");
+        } catch (error) {
+            toast.error("Profile image upload unsuccessful");
+        }
+    };
+    const avatarFun = async () => {
+        try {
+            const response = await axios.get('/api/users/edit/image');
+            if (response.data.success) {
+                setImage(response.data.image); // Set the Base64 image string
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    };
+    const handleClose = async () => {
+        setVerificationStatus(false)
+    }
+    const userStatus = async () => {
+        try {
+            const verification = await axios.get('/api/users/verification/status')
+            // console.log("verification:",verification)
+            if (verification.data.data) {
+                setVerify("Verified")
+            }else{
+                setVerify("Not verified")
+            }
+        } catch (error) {
+            return toast.error("You are not verified!")
+        }
+    }
+    
+    const handleSubmit = async (e: any) => {
+        try {
+            e.preventDefault()
+
+            const data = new FormData()
+            data.set('file', id1)
+            const res = await fetch('/api/users/verification', {
+                method: 'POST',
+                body: data
+            });
+            // console.log("res:",res)
+            if (!res.ok) throw new Error(await res.text())
+
+            // await axios.post("/api/users/verification" ,{id1,id2} )
+            setVerificationStatus(false)
+        } catch (error: any) {
+            return toast.error("Unable to verify credentials!")
+        }
+    };
+
+    // console.log(image)
     useEffect(() => {
+        userStatus()
+        avatarFun()
         balFun()
         fetchData()
     }, [data])
 
     return (
         <>
-            <HeaderUser username={username} />
+            <HeaderUser username={username} image={image} avatarImg={avatarImg} />
             <div className="container mx-auto p-4 ">
                 <div className="flex flex-wrap -mx-4 mt-10">
                     {/* Sidebar */}
@@ -135,12 +297,15 @@ const Page = () => {
                         <div className="bg-white shadow rounded-lg p-4 mb-6">
                             <div className="flex flex-col items-center text-center">
                                 <Image
-                                    src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                                    alt="Admin"
+                                    src={image || avatarImg}
                                     className="rounded-full object-cover"
                                     width={128} // Width in pixels
                                     height={128} // Height in pixels
+                                    alt='avatar'
                                 />
+                                <FaRegPenToSquare className='edit-pen' onClick={editImage} />
+                                {modal && <Modal setModal={setModal} setProfileImage={setProfileImage} handleImageChange={handleImageChange} />}
+                                <Toaster />
                                 <div className="mt-3">
                                     <h4 className="text-lg font-semibold">{!username ? "Loading..." : username}</h4>
                                     <p className="text-gray-500">{user.address}</p>
@@ -158,15 +323,15 @@ const Page = () => {
                                         <MdOutlineVerifiedUser size={20} color='gray' className="mr-2" />
                                         Verification Status
                                     </h6>
-                                    <div className="text-white bg-red-500 px-1 text-xs cursor-pointer" title="Upload your ID"
+                                    <div className={`text-white  ${verify === "Verified" ? "bg-green-500":"bg-red-500"} px-1 text-xs cursor-pointer`} title="Upload your ID"
                                         onClick={statusFun}
-                                    >{!verificationStatus && "Not verified"}</div>
-                                    {verificationStatus && <UploadId />}
+                                    >{!verificationStatus && verify}</div>
+                                    {verificationStatus && <UploadId setId1={setId1} setId2={setId2} handleClose={handleClose} handleSubmit={handleSubmit} />}
+                                    {/* {verificationStatus || editId && <UploadId handleSubmit={handleSubmit} setEditId={setEditId} loading={loading} handleFileChange={handleFileChange} setFaceImage={setFaceImage} setDocumentImage={setDocumentImage} />} */}
                                 </li>
                             </ul>
                         </div>
                     </div>
-
                     {/* Main Content */}
                     <div className="w-full md:w-2/3 px-4">
                         <div className="bg-white shadow rounded-lg mb-6">
@@ -200,7 +365,7 @@ const Page = () => {
                                 </div>
                                 <hr className="my-2" />
                                 <div className="text-right">
-                                    <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={handleEdit}>Edit</button>
+                                    <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setEdit(true)}>Edit</button>
                                 </div>
                             </div>
                         </div>
@@ -211,14 +376,14 @@ const Page = () => {
                                 <div className="bg-white shadow rounded-lg h-full">
                                     <div className="p-4">
                                         <h1 className="flex items-center mb-3 font-bold">
-                                            Investment   Rankings
+                                            Trade  Rankings
                                         </h1>
                                         <small>Bronze</small>
                                         <div className="relative pt-1">
                                             <div className="flex mb-2 items-center justify-between">
                                                 <div>
                                                     <span className="text-xs w-[200px] justify-center text-center h-[30px] content-center cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded-full text-white bronze">
-                                                        £ 100
+                                                        £ 999
                                                     </span>
 
                                                 </div>
@@ -230,7 +395,7 @@ const Page = () => {
                                             <div className="flex mb-2 items-center justify-between">
                                                 <div>
                                                     <span className="text-xs w-[200px] justify-center text-center h-[30px] content-center cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded-full text-white silver">
-                                                        £ 400
+                                                        £ 2999
                                                     </span>
                                                 </div>
                                             </div>
@@ -241,7 +406,18 @@ const Page = () => {
                                             <div className="flex mb-2 items-center justify-between">
                                                 <div>
                                                     <span className="text-xs w-[200px] justify-center text-center h-[30px] content-center cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded-full text-white gold">
-                                                        £ 1000
+                                                        £ 4999
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                        <small>Platinum</small>
+                                        <div className="relative pt-1">
+                                            <div className="flex mb-2 items-center justify-between">
+                                                <div>
+                                                    <span className="text-xs w-[200px] justify-center text-center h-[30px] content-center cursor-pointer font-semibold inline-block py-1 px-2 uppercase rounded-full text-white platinum">
+                                                        £ 9999
                                                     </span>
                                                 </div>
                                             </div>
@@ -252,77 +428,36 @@ const Page = () => {
                             </div>
 
                             <div className="w-full md:w-1/2 px-4 mb-4">
-                                <div className="bg-white shadow rounded-lg h-full">
+                                <div className="  h-full">
                                     <div className="p-4">
                                         <h1 className="flex items-center mb-3 font-bold">
                                             Deposit
                                         </h1>
-                                        <p className='mb-2'>Choose the cryptocurrency to invest</p>
-                                        {/* <div className="w-full max-w-sm mx-auto  p-4 ">
-                                            <ul className="list-none">
-                                                <li className="flex items-center py-2">
-                                                    <label className="flex items-center cursor-pointer w-full">
-                                                        <input type="radio" name="task" className="mr-2 text-blue-600" />
-                                                        <span className="text-gray-600">BTC</span>
-                                                    </label>
-                                                </li>
-                                                <li className="flex items-center py-2">
-                                                    <label className="flex items-center cursor-pointer w-full">
-                                                        <input type="radio" name="task" className="mr-2 text-blue-600" />
-                                                        <span className="text-gray-600">ETH</span>
-                                                    </label>
-                                                </li>
-                                                <li className="flex items-center py-2">
-                                                    <label className="flex items-center cursor-pointer w-full">
-                                                        <input type="radio" name="task" className="mr-2 text-blue-600" />
-                                                        <span className="text-gray-600">GOLD</span>
-                                                    </label>
-                                                </li>
-                                            </ul>
-                                            <div className="mt-4 flex">
-                                                <div className="justify-center content-center text-center text-lg font-bold">
-                                                    £
-                                                </div>
-                                                <input
-                                                    type="number"
-                                                    name="amount"
-                                                    value={amount}
-                                                    onChange={(e) => setAmount(e.target.value)}
-                                                    placeholder="Enter amount"
-                                                    className="w-full px-3 ml-3 py-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                                />
-                                            </div>
+                                        <p className='mb-2'>Choose the cryptocurrency to fund with</p>
 
-                                            <div className="mt-6">
-                                                <button
-                                                    type="submit"
-                                                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
-                                                    onClick={initializePay}
-                                                >
-                                                    Pay
-                                                </button>
+                                        <div className='flex  cypto'>
+                                            <div>
+                                                <button className='bg-yellow-200 ml-2 px-4 py-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-yellow-500' onClick={handleWallet}>BTC</button>
                                             </div>
-                                        </div> */}
-                                        {/* <Pay setCurrency={setCurrency} /> */}
-                                        <div className='flex  py-2 my-4'>
-                                            <div className='text-sm  justify-center text-center font-bold p-3'>{currency}</div>
-                                            <input
-                                                type="number"
-                                                name="amount"
-                                                value={amount}
-                                                onChange={(e) => setAmount(e.target.value)}
-                                                placeholder="Enter amount"
-                                                className="w-30 p-3 ml- border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            />
+                                            <div>
+                                                <button className='bg-gray-200 px-4 ml-2 py-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-gray-500' onClick={handleWalletEth}>ETH</button>
+                                            </div>
+                                            <div>
+                                                <button className='bg-blue-200 px-4 ml-2 py-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-blue-500' onClick={handleWalletLtc}>LTC</button>
+                                            </div>
+                                            <div>
+                                                <button className='bg-red-200 px-4 py-2 ml-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-red-500' onClick={handleWalletUSDT}>USDTTRC20</button>
+                                            </div>
                                         </div>
                                         <div className="mt-6">
-                                            <button
+                                            {/* <button
                                                 type="submit"
                                                 className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
                                                 onClick={startPay}
                                             >
                                                 Pay
-                                            </button>
+                                            </button> */}
+                                            <p className='text-red-500 text-sm font-normal wallet '>{wallet} </p>{wallet && <IoCopyOutline className='cursor-pointer' onClick={handleCopy} />}
                                         </div>
                                     </div>
                                 </div>

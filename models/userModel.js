@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -39,6 +40,13 @@ const userSchema = new mongoose.Schema({
     idVerification: {
         type: Boolean,
         default: false,
+    },
+    image: {
+        type: Buffer, 
+        default:null
+    },
+    avatar:{
+        type:Buffer
     }
 });
 

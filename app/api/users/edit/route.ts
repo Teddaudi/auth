@@ -13,8 +13,9 @@ export async function PUT(request:NextRequest) {
             fullName,
             phone,
             address,
-            investment
-        })
+            investment,
+        },
+        { new: true })
         await userUpdate.save()
         return NextResponse.json({
             message: "User details updated successfully",

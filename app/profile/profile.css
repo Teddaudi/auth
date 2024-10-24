@@ -2,6 +2,12 @@ body{
     margin-top:20px;
    
 }
+.edit-pen{
+    position: relative;
+    top: -5px;
+    right: -20px;
+    cursor: pointer;
+}
 .profile{
     margin-top: 40px !important;
 }

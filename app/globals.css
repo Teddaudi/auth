@@ -29,3 +29,13 @@ body {
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+.wallet{
+  max-width: 50px !important;
+}
+.platinum{
+  background-color: rgb(175, 175, 183);
+}
+/* .cypto{
+  max-width: 400px !important;
+} */

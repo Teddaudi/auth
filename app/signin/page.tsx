@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
+// import signUpResponse from '../util/mail/sendMail'
+// import paymentResponse from '../util/mail/paymentInit'
+
 
 const Page = () => {
   const router = useRouter();
@@ -22,6 +25,8 @@ const Page = () => {
       }
       router.push('/profile')
       // router.push('/dashboard')
+      // signUpResponse({email:'daudited@gmail.com', name:'Daudi'})
+      // paymentResponse({email:'daudited@gmail.com', name:'Daudi'})
       toast.success("Login successful")
     } catch (error: any) {
       toast.error(error.message)

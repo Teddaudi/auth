@@ -8,8 +8,10 @@ import Image from 'next/image';
 
 interface HeaderUserProps {
     username: string; // Define the type for the username prop
+    image:any;
+    avatarImg:any
 }
-const HeaderUser: React.FC<HeaderUserProps> = ({ username }) => {
+const HeaderUser: React.FC<HeaderUserProps> = ({ username,image,avatarImg }) => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const router = useRouter()
@@ -59,7 +61,7 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username }) => {
                     <li className="relative dropdown-container" onClick={toggleUserDropdown}>
                         <Image
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
-                            src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                            src={image || avatarImg}
                             alt="User avatar"
                             width={32}
                             height={32}
