@@ -273,6 +273,7 @@ const Page = () => {
             if (!res.ok) throw new Error(await res.text())
 
             // await axios.post("/api/users/verification" ,{id1,id2} )
+            toast.success("Verification Successful!")
             setVerificationStatus(false)
         } catch (error: any) {
             return toast.error("Unable to verify credentials!")
