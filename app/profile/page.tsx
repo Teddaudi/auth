@@ -58,27 +58,27 @@ const Page = () => {
         // console.log("clicked")
     }
     // Convert file to base64
-    const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = (error) => reject(error);
-        });
-    };
+    // const convertToBase64 = (file) => {
+    //     return new Promise((resolve, reject) => {
+    //         const reader = new FileReader();
+    //         reader.readAsDataURL(file);
+    //         reader.onload = () => resolve(reader.result.split(',')[1]);
+    //         reader.onerror = (error) => reject(error);
+    //     });
+    // };
 
 
-    async function startPay() {
-        const data = { currency, amount, email, name: username };
-        try {
-            const response = await axios.post("/api/coinbase", data)
-            const url = response.data.charge.hosted_url;
-            window.open(url, '_blank')
-        } catch (error: any) {
-            toast.error(error.message)
-        }
+    // async function startPay() {
+    //     const data = { currency, amount, email, name: username };
+    //     try {
+    //         const response = await axios.post("/api/coinbase", data)
+    //         const url = response.data.charge.hosted_url;
+    //         window.open(url, '_blank')
+    //     } catch (error: any) {
+    //         toast.error(error.message)
+    //     }
 
-    }
+    // }
     function handleEdit() {
         setEdit(false)
     }
@@ -109,40 +109,40 @@ const Page = () => {
             toast.error("Failed to update", error.message)
         }
     }
-    const initializePay = async () => {
-        if (typeof window !== 'undefined') {
-            const PaystackPop = (await import('@paystack/inline-js')).default;
-            try {
-                const popup = new PaystackPop();
-                const pay = await axios.post('/api/payment', { email, amount });
-                const access_code = pay.data.data.access_code;
-                popup.resumeTransaction(access_code);
-                toast.success("Payment initialised successfully");
-            } catch (error: any) {
-                toast.error("Payment failed", error.message);
-            }
-        } else {
-            console.error("Paystack can only be initialized in the browser.");
-        }
-    };
-    const getTransactions = async () => {
-        try {
-            const data = await axios.get('/api/payment')
-            const transactions = data.data.data.data
-            const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
-                customerEmail: transaction.customer.email,
-                status: transaction.status,
-                paid_at: transaction.paid_at,
-                channel: transaction.channel,
-                customerPayment: transaction.amount
-            }));
+    // const initializePay = async () => {
+    //     if (typeof window !== 'undefined') {
+    //         const PaystackPop = (await import('@paystack/inline-js')).default;
+    //         try {
+    //             const popup = new PaystackPop();
+    //             const pay = await axios.post('/api/payment', { email, amount });
+    //             const access_code = pay.data.data.access_code;
+    //             popup.resumeTransaction(access_code);
+    //             toast.success("Payment initialised successfully");
+    //         } catch (error: any) {
+    //             toast.error("Payment failed", error.message);
+    //         }
+    //     } else {
+    //         console.error("Paystack can only be initialized in the browser.");
+    //     }
+    // };
+    // const getTransactions = async () => {
+    //     try {
+    //         const data = await axios.get('/api/payment')
+    //         const transactions = data.data.data.data
+    //         const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
+    //             customerEmail: transaction.customer.email,
+    //             status: transaction.status,
+    //             paid_at: transaction.paid_at,
+    //             channel: transaction.channel,
+    //             customerPayment: transaction.amount
+    //         }));
 
-            // console.log("Transactions:", extractedData[0].customerEmail);
-        } catch (error: any) {
-            // console.log("Failed to get the list", error.message)
-            toast.error("Failed to get the list", error.message)
-        }
-    }
+    //         // console.log("Transactions:", extractedData[0].customerEmail);
+    //     } catch (error: any) {
+    //         // console.log("Failed to get the list", error.message)
+    //         toast.error("Failed to get the list", error.message)
+    //     }
+    // }
 
     const balFun = async () => {
         try {
@@ -177,7 +177,7 @@ const Page = () => {
     };
     async function handleWallet() {
         try {
-            Test()
+            
             setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
         } catch (error: any) {
             return toast.error(error.message)
