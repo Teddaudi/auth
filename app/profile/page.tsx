@@ -35,7 +35,7 @@ const Page = () => {
     })
     const [amount, setAmount] = useState("")
     const [currency, setCurrency] = useState("£")
-    const [balance, setBalance] = useState()
+    const [balance, setBalance] = useState<any>(0)
     const router = useRouter()
     const [documentImage, setDocumentImage] = useState(null);
     const [faceImage, setFaceImage] = useState(null);
@@ -45,6 +45,8 @@ const Page = () => {
     const [wallet, setWallet] = useState("")
     const [profileImage, setProfileImage] = useState("")
     const [modal, setModal] = useState(false)
+    const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
+
     // Handle file selection
     // const handleFileChange = (e, setImage) => {
     //     const file = e.target.files[0];
@@ -57,28 +59,35 @@ const Page = () => {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
     }
-    // Convert file to base64
-    // const convertToBase64 = (file) => {
-    //     return new Promise((resolve, reject) => {
-    //         const reader = new FileReader();
-    //         reader.readAsDataURL(file);
-    //         reader.onload = () => resolve(reader.result.split(',')[1]);
-    //         reader.onerror = (error) => reject(error);
-    //     });
-    // };
+    async function balanceChange() {
+        const updateInterval = 1000 * 60 * 60; // Update every 1 hour (3600000ms)
+        const maxTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
+        const intervalId = setInterval(() => {
+            setElapsedTime((prevTime) => {
+                const newTime = prevTime + updateInterval;
 
-    // async function startPay() {
-    //     const data = { currency, amount, email, name: username };
-    //     try {
-    //         const response = await axios.post("/api/coinbase", data)
-    //         const url = response.data.charge.hosted_url;
-    //         window.open(url, '_blank')
-    //     } catch (error: any) {
-    //         toast.error(error.message)
-    //     }
+                // If we've reached or exceeded 24 hours, stop updating
+                if (newTime >= maxTime) {
+                    clearInterval(intervalId);
+                    return maxTime;
+                }
 
-    // }
+                // Generate a random multiplier between 1 and 10
+                const randomMultiplier = Math.random() * 9 + 1;
+                const newBalance = balance * randomMultiplier;
+
+                // Update the balance, rounding to two decimal places
+                setBalance(parseFloat(newBalance.toFixed(2)));
+
+                return newTime;
+            });
+        }, updateInterval); // Update every hour
+
+        // Clean up the interval when the component unmounts
+        return () => clearInterval(intervalId);
+    }
+
     function handleEdit() {
         setEdit(false)
     }
@@ -172,29 +181,29 @@ const Page = () => {
             await navigator.clipboard.writeText(wallet);
             alert('Text copied to clipboard!');
         } catch (error) {
-             console.log('Failed to copy text:', error);
+            console.log('Failed to copy text:', error);
         }
     };
     async function handleWallet() {
         try {
-            
+
             setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
         } catch (error: any) {
-            return  console.log(error.message)
+            return console.log(error.message)
         }
     }
     async function handleWalletEth() {
         try {
             setWallet("0x84E374B803491D9fC6a71889E25a16f37B6747Ed")
         } catch (error: any) {
-            return  console.log(error.message)
+            return console.log(error.message)
         }
     }
     async function handleWalletLtc() {
         try {
             setWallet("ltc1qa2c6wc39utg246rmt38x62src8dct3tvykg3me")
         } catch (error: any) {
-            return  console.log(error.message)
+            return console.log(error.message)
         }
     }
     async function handleWalletUSDT() {
@@ -236,10 +245,10 @@ const Page = () => {
             if (response.data.success) {
                 setImage(response.data.image); // Set the Base64 image string
             } else {
-                 console.log(response.data.message);
+                console.log(response.data.message);
             }
         } catch (error: any) {
-             console.log(error.message);
+            console.log(error.message);
         }
     };
     const handleClose = async () => {
@@ -251,14 +260,14 @@ const Page = () => {
             // console.log("verification:",verification)
             if (verification.data.data) {
                 setVerify("Verified")
-            }else{
+            } else {
                 setVerify("Not verified")
             }
         } catch (error) {
             return toast.error("You are not verified!")
         }
     }
-    
+
     const handleSubmit = async (e: any) => {
         try {
             e.preventDefault()
@@ -281,11 +290,11 @@ const Page = () => {
     };
     const originalWarn = console.warn;
     console.warn = (...args) => {
-      if (typeof args[0] === 'string' && args[0].includes('Image with src')) {
-        // Skip this specific warning
-        return;
-      }
-      originalWarn(...args);
+        if (typeof args[0] === 'string' && args[0].includes('Image with src')) {
+            // Skip this specific warning
+            return;
+        }
+        originalWarn(...args);
     };
     // console.log(image)
     useEffect(() => {
@@ -293,6 +302,7 @@ const Page = () => {
         avatarFun()
         balFun()
         fetchData()
+        balanceChange()
     }, [data])
 
     return (
@@ -331,7 +341,7 @@ const Page = () => {
                                         <MdOutlineVerifiedUser size={20} color='gray' className="mr-2" />
                                         Verification Status
                                     </h6>
-                                    <div className={`text-white  ${verify === "Verified" ? "bg-green-500":"bg-red-500"} px-1 text-xs cursor-pointer`} title="Upload your ID"
+                                    <div className={`text-white  ${verify === "Verified" ? "bg-green-500" : "bg-red-500"} px-1 text-xs cursor-pointer`} title="Upload your ID"
                                         onClick={statusFun}
                                     >{!verificationStatus && verify}</div>
                                     {verificationStatus && <UploadId setId1={setId1} setId2={setId2} handleClose={handleClose} handleSubmit={handleSubmit} />}

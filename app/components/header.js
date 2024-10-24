@@ -60,7 +60,7 @@ const Header = () => {
                     <li onClick={toggleUserDropdown}>
                         <Image
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
-                            src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                            src=""
                             alt="Profile Image"
                             width={32} // Adjust width to match the size of the image (e.g., 8 * 4 = 32)
                             height={32} // Adjust height to match the size of the image (e.g., 8 * 4 = 32)

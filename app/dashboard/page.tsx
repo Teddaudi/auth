@@ -29,7 +29,7 @@ const Page = () => {
                 channel: transaction.channel,
                 customerPayment: transaction.amount
             }));
-            setTotalUsers(extractedData.length)
+            // setTotalUsers(extractedData.length)
             setUserData(extractedData)
         } catch (error: any) {
             console.log("Failed to get the list", error.message)
@@ -40,7 +40,14 @@ const Page = () => {
         return acc + (transaction.status === "success" ? transaction.customerPayment : 0);
     }, 0);
     const router = useRouter()
-
+    const getUser =async()=>{
+        try {
+            const users = await axios.get('/api/users/all')
+            setTotalUsers(users.data.data.length)
+        } catch (error:any) {
+            console.log(error.message)
+        }
+    }
     const logOut = async()=>{
         try {
           await axios.get('/api/users/logout')
@@ -51,8 +58,9 @@ const Page = () => {
         }
     }
     useEffect(() => {
-        getTransactions()
-    }, [totalUsers])
+        getUser()
+        // getTransactions()
+    }, [])
     return (
         <div>
             <Header  />

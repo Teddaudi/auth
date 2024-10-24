@@ -17,14 +17,16 @@ const Page = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const onLogin = async () => {
     try {
-      const userData = await axios.post('api/users/login', user)
+      const userData:any = await axios.post('api/users/login', user)
       setAdmin(userData.data)
-      // console.log("admin:", admin)
-      if (!admin) {
-        // console.log("loginData:", admin)
+      console.log("userData:", userData.data.user.isAdmin)
+      if (!userData.data.user.isAdmin) {
+
+        router.push('/profile')
+        console.log("admin")
+      }else{
+        router.push('/dashboard')
       }
-      router.push('/profile')
-      // router.push('/dashboard')
       // signUpResponse({email:'daudited@gmail.com', name:'Daudi'})
       // paymentResponse({email:'daudited@gmail.com', name:'Daudi'})
       toast.success("Login successful")
