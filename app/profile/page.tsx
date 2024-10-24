@@ -278,7 +278,14 @@ const Page = () => {
             return toast.error("Unable to verify credentials!")
         }
     };
-
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Image with src')) {
+        // Skip this specific warning
+        return;
+      }
+      originalWarn(...args);
+    };
     // console.log(image)
     useEffect(() => {
         userStatus()
