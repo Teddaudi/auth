@@ -15,7 +15,12 @@ const Page = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const onSignUp = async () => {
     try {
+      const data = {
+        name: user.username,
+        email: user.email
+      }
       await axios.post("api/users/signup", user)
+      await axios.post("/api/mail",data)
       router.push('/signin')
     } catch (error: any) {
       console.log("signup:", error.message)

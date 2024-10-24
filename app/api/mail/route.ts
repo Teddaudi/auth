@@ -6,7 +6,7 @@ import path from 'path';
 export async function POST(request:NextRequest) {
     const reqBody =await request.json()
     const { email, name } = reqBody;
-
+console.log("reqBodyMail:", reqBody)
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return NextResponse.json({ message: "Invalid email address" });
         }
@@ -17,8 +17,8 @@ export async function POST(request:NextRequest) {
                 port: 465,
                 secure: true,
                 auth: {
-                    user: "hr@ezracapitaltrades.com",
-                    pass: "U4KybGTej369RB9"
+                    user: "admin@ezracapitaltrades.com",
+                    pass: "o%ZoG-yD6buh"
                 }
             });
 
@@ -35,8 +35,8 @@ export async function POST(request:NextRequest) {
 
             const mailOptions = {
                 from: {
-                    name: "Ezracapital Trades",
-                    address: "hr@ezracapitaltrades.com",
+                    name: "Ezcapasia",
+                    address: "admin@ezracapitaltrades.com",
                 },
                 to: email,
                 subject: "Your registration was successful",
