@@ -7,24 +7,32 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 interface HeaderUserProps {
-    username: string; // Define the type for the username prop
-    image:any;
-    avatarImg:any
+    username: string;
+    image: any;
+    avatarImg: any;
+    balance: number; // Define balance as a number type for clarity
 }
-const HeaderUser: React.FC<HeaderUserProps> = ({ username,image,avatarImg }) => {
+
+const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, balance }) => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const router = useRouter()
+    const router = useRouter();
+
     const logOut = async () => {
         try {
-            await axios.get('/api/users/logout')
-            toast.success('Logout successful')
-            router.push('/signin')
+            await axios.get('/api/users/logout');
+            toast.success('Logout successful');
+            router.push('/signin');
         } catch (error: any) {
-            toast.error(error.message)
+            toast.error(error.message);
         }
-    }
-    // Function to handle clicks outside of the dropdown to close it
+    };
+
+    const handleCheckout = () => {
+        console.log("Cashout");
+        console.log("Balance:", balance);
+    };
+
     useEffect(() => {
         const handleOutsideClick = (e: any) => {
             if (!e.target.closest('.dropdown-container')) {
@@ -70,6 +78,13 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username,image,avatarImg }) => 
                         <ul
                             className={`absolute ${isDropdownOpen ? 'block' : 'hidden'} bg-white right-0 top-12 w-28 rounded shadow-md z-20`}
                         >
+                            {balance > 0 && (
+                                <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
+                                    <a className="block px-5 py-2" href={`/cashout?balance=${balance}`}  target="_blank" onClick={handleCheckout}>
+                                        Withdraw
+                                    </a>
+                                </li>
+                            )}
                             <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
                                 <a className="block px-5 py-2" href="#" onClick={logOut}>Logout</a>
                             </li>

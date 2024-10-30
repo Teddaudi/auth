@@ -32,6 +32,7 @@ export const config = {
         '/profile',
         '/signin',
         '/signup',
-        '/admin/dashboard'
+        '/admin/dashboard',
+        '/cashout'
     ],
 }
