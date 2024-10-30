@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BsCashCoin } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa6";
 import axios from 'axios';
@@ -12,6 +12,7 @@ import { MdSystemUpdateAlt } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 import { RiSave3Fill } from "react-icons/ri";
 import { MdCancel } from "react-icons/md";
+import { VscDebugStart } from "react-icons/vsc";
 
 
 interface Transaction {
@@ -32,6 +33,10 @@ const Page = () => {
     const [currentEditIndex, setCurrentEditIndex] = useState<number | null>(null);
     const [deposit, setDeposit] = useState(0)
     const [usersDeleted, setUsersDeleted] = useState(0)
+    const [balance, setBalance] = useState<any>(20)
+    // const [initialBalance, setInitialBalance] = useState(balance);
+    const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
+
     function handleMessage() {
         setMessage((prev: any) => !prev)
 
@@ -81,7 +86,7 @@ const Page = () => {
         setEdit((prev) => !prev);
         setCurrentEditIndex(index);
     }
-  
+
     async function deleteUser(user: any) {
         try {
             setUsersDeleted(prev => prev + 1)
@@ -119,6 +124,66 @@ const Page = () => {
             console.log(error.message)
         }
     }
+    async function handleTrade(user: any) {
+        const initialUserBalance = parseFloat(user.investment) || 100;
+        const userIds = user._id;
+        await balanceChange(initialUserBalance, userIds)
+    }
+    const balanceChange = useCallback((initialBalance: number, userIds: any) => {
+        const updateInterval = 60 * 1000; // 1 minute in milliseconds
+        const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const startTime = Date.now();
+        const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
+        const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
+
+        const intervalId = setInterval(() => {
+            setElapsedTime((prevTime) => {
+                const elapsedTime = Date.now() - startTime;
+
+                if (elapsedTime >= maxTime) {
+                    clearInterval(intervalId);
+                    return maxTime;
+                }
+
+                // Generate a random multiplier for the balance adjustment
+                const randomMultiplier = Math.random() * 10;
+                const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
+                const adjustment = direction * randomMultiplier * effectiveInitialBalance;
+
+                setBalance(async (currentBalance: any) => {
+                    const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
+
+                    // Calculate the new balance with adjustment
+                    let newBalance = numericBalance + adjustment;
+
+                    // Check if we've reached maxBalance
+                    if (newBalance >= maxBalance) {
+                        clearInterval(intervalId); // Stop updating if maxBalance is reached
+                        (async () => {
+                            try {
+                                const formattedBalance = parseFloat(newBalance.toFixed(2));
+                                await axios.put('/api/users/edit/deposit', {
+                                    userId: userIds,
+                                    deposit: formattedBalance
+                                });
+                                toast.success("Maximum Price Reached");
+                            } catch (error) {
+                                console.error("Error updating balance:", error);
+                                toast.error("Failed to update balance");
+                            }
+                        })();
+                    }
+
+                    return parseFloat(newBalance.toFixed(2));
+                });
+
+                return elapsedTime;
+            });
+        }, updateInterval);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
         <>
             <Header />
@@ -215,6 +280,7 @@ const Page = () => {
                                             </td>
                                             <td className="p-3"> <MdDelete className='text-red-300 hover:text-red-600 cursor-pointer' onClick={() => deleteUser(user)} /></td>
                                             <td className="p-3"> <RiSave3Fill className='text-green-300 hover:text-green-600 cursor-pointer' size={20} onClick={() => saveDeposit(user)} /></td>
+                                            <td className="p-3"> <VscDebugStart className='text-red-300 hover:text-red-600 cursor-pointer' size={20} onClick={() => handleTrade(user)} /></td>
 
                                             {/* <td className="p-3 text-center">
                                                 <div className="flex justify-center gap-2">

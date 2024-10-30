@@ -1,10 +1,11 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Popup from '../../lib/popup';
 
 interface HeaderUserProps {
     username: string;
@@ -16,6 +17,7 @@ interface HeaderUserProps {
 const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, balance }) => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [close, setClose] = useState(false); // Start with false to hide popup initially
     const router = useRouter();
 
     const logOut = async () => {
@@ -29,8 +31,7 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     };
 
     const handleCheckout = () => {
-        console.log("Cashout");
-        console.log("Balance:", balance);
+        setClose(true); // Open the popup when "Withdraw" is clicked
     };
 
     useEffect(() => {
@@ -80,18 +81,24 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
                         >
                             {balance > 0 && (
                                 <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
-                                    <a className="block px-5 py-2" href={`/cashout?balance=${balance}`}  target="_blank" onClick={handleCheckout}>
+                                    <button
+                                        className="block px-5 py-2 w-full text-left"
+                                        onClick={handleCheckout}
+                                    >
                                         Withdraw
-                                    </a>
+                                    </button>
                                 </li>
                             )}
                             <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
-                                <a className="block px-5 py-2" href="#" onClick={logOut}>Logout</a>
+                                <button className="block px-5 py-2 w-full text-left" onClick={logOut}>
+                                    Logout
+                                </button>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
+            {close && <Popup setClose={setClose} balance={balance} />} {/* Render Popup conditionally */}
         </header>
     );
 };

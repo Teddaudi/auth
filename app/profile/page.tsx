@@ -325,51 +325,52 @@ const Page = () => {
         originalWarn(...args);
     };
     // console.log(image)
-    // const balanceChange = useCallback(() => {
-    //     const updateInterval = 60 * 1000; // 1 minute in milliseconds
-    //     const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
-    //     const startTime = Date.now();
-    //     const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
-    //     const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
+    const balanceChange = useCallback(() => {
+        const updateInterval = 60 * 1000; // 1 minute in milliseconds
+        const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const startTime = Date.now();
+        const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
+        const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
     
-    //     const intervalId = setInterval(() => {
-    //         setElapsedTime((prevTime) => {
-    //             const elapsedTime = Date.now() - startTime;
+        const intervalId = setInterval(() => {
+            setElapsedTime((prevTime) => {
+                const elapsedTime = Date.now() - startTime;
     
-    //             if (elapsedTime >= maxTime) {
-    //                 clearInterval(intervalId);
-    //                 return maxTime;
-    //             }
+                if (elapsedTime >= maxTime) {
+                    clearInterval(intervalId);
+                    return maxTime;
+                }
     
-    //             // Generate a random multiplier for the balance adjustment
-    //             const randomMultiplier = Math.random() * 0.3;
-    //             const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
-    //             const adjustment = direction * randomMultiplier * effectiveInitialBalance;
+                // Generate a random multiplier for the balance adjustment
+                const randomMultiplier = Math.random() * 0.3;
+                const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
+                const adjustment = direction * randomMultiplier * effectiveInitialBalance;
     
-    //             setBalance((currentBalance: any) => {
-    //                 const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
+                setBalance((currentBalance: any) => {
+                    const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
     
-    //                 // Calculate the new balance with adjustment
-    //                 let newBalance = numericBalance + adjustment;
+                    // Calculate the new balance with adjustment
+                    let newBalance = numericBalance + adjustment;
     
-    //                 // Check if we've reached maxBalance
-    //                 if (newBalance >= maxBalance) {
-    //                     clearInterval(intervalId); // Stop updating if maxBalance is reached
-    //                     newBalance = maxBalance; // Set newBalance to maxBalance
-    //                     console.log(`Reached Max Balance: £${newBalance.toFixed(2)}`);
-    //                 } else {
-    //                     console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`);
-    //                 }
+                    // Check if we've reached maxBalance
+                    if (newBalance >= maxBalance) {
+                        clearInterval(intervalId); // Stop updating if maxBalance is reached
+                        newBalance = maxBalance; // Set newBalance to maxBalance
+                        console.log(`Reached Max Balance: £${newBalance.toFixed(2)}`);
+                        toast.success("Maximum Price Reached")
+                    } else {
+                        console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`);
+                    }
     
-    //                 return parseFloat(newBalance.toFixed(2));
-    //             });
+                    return parseFloat(newBalance.toFixed(2));
+                });
     
-    //             return elapsedTime;
-    //         });
-    //     }, updateInterval);
+                return elapsedTime;
+            });
+        }, updateInterval);
     
-    //     return () => clearInterval(intervalId);
-    // }, [initialBalance]);
+        return () => clearInterval(intervalId);
+    }, [initialBalance]);
     
     
     
@@ -411,7 +412,7 @@ const Page = () => {
                                 </div>
                             </div>
                         </div>
-{/* <button onClick={balanceChange}>Balnce change</button> */}
+<button onClick={balanceChange}>Balnce change</button>
                         <div className="bg-white shadow rounded-lg">
                             <ul className="list-none">
                                 <li className="flex justify-between items-center p-4 border-b">

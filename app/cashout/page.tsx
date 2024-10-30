@@ -38,8 +38,8 @@ const Page: React.FC<{ searchParams: SearchParams }> = ({ searchParams }) => {
                 <div className='mb-4'>
                     <h1 className='font-extrabold text-lg'>Total Cashout: £{balance}</h1>
                 </div>
-                <BsCashCoin size={85} className="text-green-500" />
-                <p className="mt-2 font-bold text-green-500 text-lg">Loading transaction...</p>
+                <div className="spinner"></div>
+                <p className="mt-2 font-bold text-red-500 text-lg">Transaction pending...</p>
             </div>
         </div>
     );
