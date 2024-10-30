@@ -11,7 +11,6 @@ export async function PUT(request: NextRequest) {
         const reqBody = await request.json()
         const { deposit, userId } = reqBody;
         const userUpdate = await User.findByIdAndUpdate({_id: userId }, { investment: deposit })
-        console.log("userdepoupdate:", userUpdate)
         return NextResponse.json({
             message: "User details updated successfully",
             data: userUpdate

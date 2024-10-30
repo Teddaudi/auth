@@ -81,21 +81,7 @@ const Page = () => {
         setEdit((prev) => !prev);
         setCurrentEditIndex(index);
     }
-    async function saveDeposit(user: any) {
-        try {
-            const data = await axios.put('/api/users/edit/deposit', {
-                userId: user._id,
-                deposit: deposit
-            })
-            if (data) {
-                return toast.success("Deposit price updated successfully!")
-            } else {
-                return toast.error("Deposit price not updated!")
-            }
-        } catch (error: any) {
-            console.log(error.message)
-        }
-    }
+  
     async function deleteUser(user: any) {
         try {
             setUsersDeleted(prev => prev + 1)
@@ -117,6 +103,22 @@ const Page = () => {
         getUser()
         // getTransactions()
     }, [])
+    async function saveDeposit(user: any) {
+        try {
+            const data = await axios.put('/api/users/edit/deposit', {
+                userId: user._id,
+                deposit: deposit
+            })
+            if (data) {
+                toast.success("Deposit price updated successfully!")
+                getUser();
+            } else {
+                return toast.error("Deposit price not updated!")
+            }
+        } catch (error: any) {
+            console.log(error.message)
+        }
+    }
     return (
         <>
             <Header />
