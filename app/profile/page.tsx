@@ -85,7 +85,7 @@ const Page = () => {
     //             setBalance((currentBalance: any) => {
     //                 // Ensure currentBalance is a number
     //                 const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || 0;
-    
+
     //                 let newBalance = numericBalance * randomMultiplier;
     //                 newBalance = Math.max(0, Math.min(newBalance, balance*10))
     //                 console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`); // Log balance change
@@ -326,32 +326,33 @@ const Page = () => {
     };
     // console.log(image)
     const balanceChange = useCallback(() => {
-        const updateInterval = 60 * 1000; // 1 minute in milliseconds
-        const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const updateInterval = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+        const maxTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
         const startTime = Date.now();
         const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
         const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
-    
+
         const intervalId = setInterval(() => {
             setElapsedTime((prevTime) => {
                 const elapsedTime = Date.now() - startTime;
-    
+
                 if (elapsedTime >= maxTime) {
                     clearInterval(intervalId);
                     return maxTime;
                 }
-    
+
                 // Generate a random multiplier for the balance adjustment
                 const randomMultiplier = Math.random() * 0.3;
                 const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
                 const adjustment = direction * randomMultiplier * effectiveInitialBalance;
-    
+
                 setBalance((currentBalance: any) => {
                     const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
-    
+
                     // Calculate the new balance with adjustment
                     let newBalance = numericBalance + adjustment;
-    
+
                     // Check if we've reached maxBalance
                     if (newBalance >= maxBalance) {
                         clearInterval(intervalId); // Stop updating if maxBalance is reached
@@ -361,19 +362,19 @@ const Page = () => {
                     } else {
                         console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`);
                     }
-    
+
                     return parseFloat(newBalance.toFixed(2));
                 });
-    
+
                 return elapsedTime;
             });
         }, updateInterval);
-    
+
         return () => clearInterval(intervalId);
     }, [initialBalance]);
-    
-    
-    
+
+
+
     useEffect(() => {
         userStatus()
         avatarFun()
@@ -386,7 +387,7 @@ const Page = () => {
 
     return (
         <>
-            <HeaderUser username={username} image={image} avatarImg={avatarImg} balance={balance}/>
+            <HeaderUser username={username} image={image} avatarImg={avatarImg} balance={balance} />
             <div className="container mx-auto p-4 ">
                 <div className="flex flex-wrap -mx-4 mt-10">
                     {/* Sidebar */}
@@ -412,7 +413,7 @@ const Page = () => {
                                 </div>
                             </div>
                         </div>
-<button onClick={balanceChange}>Balnce change</button>
+                        <button onClick={balanceChange}>Balnce change</button>
                         <div className="bg-white shadow rounded-lg">
                             <ul className="list-none">
                                 <li className="flex justify-between items-center p-4 border-b">
