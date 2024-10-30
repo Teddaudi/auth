@@ -23,7 +23,7 @@
     /* Centers content horizontally */
     align-items: center;
     /* Centers content vertically */
-    background-color: #f4f4f4;
+/*    background-color: #f4f4f4;*/
     font-family: "Epilogue", sans-serif;
     line-height: 1.6;
     color: #333;
@@ -40,7 +40,9 @@
     max-width: 600px;
     width:100%;
   }
-
+.logo img{
+  background-color: #000000 !important;
+}
   .header {
     background-color: #000000;
     color: #ffffff;
@@ -113,4 +115,15 @@
   .footer a {
     color: gray;
   }
+  @media (max-width: 768px) {
+    
+  .header {
+    background-color: black !important; /* Darker shade for desktop */
+  }
+
+  .footer {
+    background-color: #1a73e8; /* Lighter blue for desktop */
+    color: #f1f1f1 !important; /* Slightly lighter text color */
+  }
+}
 </style>

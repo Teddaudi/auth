@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import avatarImg from "../../images/avatar.png" 
 
 const Header = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -35,7 +36,7 @@ const Header = () => {
         fetchData()
     }, [])
     return (
-        <header className="h-14 bg-gray-100 top-0 w-full fixed shadow" style={{ zIndex: 99999 }}>
+        <header className="h-14 bg-gray-100 top-0 w-full fixed shadow mb-[36px]" style={{ zIndex: 10 }}>
             <div className="flex justify-between items-center px-10 h-14">
                 <div className="flex justify-between items-center gap-x-14">
                     <div className="w-40">
@@ -60,7 +61,7 @@ const Header = () => {
                     <li onClick={toggleUserDropdown}>
                         <Image
                             className="inline-block h-8 w-8 rounded-full ring-2 ring-white cursor-pointer"
-                            src=""
+                            src={avatarImg}
                             alt="Profile Image"
                             width={32} // Adjust width to match the size of the image (e.g., 8 * 4 = 32)
                             height={32} // Adjust height to match the size of the image (e.g., 8 * 4 = 32)

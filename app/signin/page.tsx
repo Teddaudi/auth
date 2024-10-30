@@ -18,17 +18,14 @@ const Page = () => {
   const onLogin = async () => {
     try {
       const userData:any = await axios.post('api/users/login', user)
-      setAdmin(userData.data)
       console.log("userData:", userData.data.user.isAdmin)
+      setAdmin(userData.data.user.isAdmin)
       if (!userData.data.user.isAdmin) {
 
         router.push('/profile')
-        console.log("admin")
       }else{
-        router.push('/dashboard')
+        router.push('/admin/dashboard')
       }
-      // signUpResponse({email:'daudited@gmail.com', name:'Daudi'})
-      // paymentResponse({email:'daudited@gmail.com', name:'Daudi'})
       toast.success("Login successful")
     } catch (error: any) {
       toast.error(error.message)

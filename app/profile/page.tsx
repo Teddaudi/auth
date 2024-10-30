@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import './profile.css'
 import { MdOutlineVerifiedUser } from "react-icons/md";
 import { FaRegPenToSquare } from "react-icons/fa6";
@@ -35,7 +35,8 @@ const Page = () => {
     })
     const [amount, setAmount] = useState("")
     const [currency, setCurrency] = useState("£")
-    const [balance, setBalance] = useState<any>(0)
+    const [initialBalance, setInitialBalance] = useState(0);
+    const [balance, setBalance] = useState<any>(initialBalance)
     const router = useRouter()
     const [documentImage, setDocumentImage] = useState(null);
     const [faceImage, setFaceImage] = useState(null);
@@ -59,34 +60,46 @@ const Page = () => {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
     }
-    async function balanceChange() {
-        const updateInterval = 1000 * 60 * 60; // Update every 1 hour (3600000ms)
-        const maxTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    // const updateInterval = 1000 * 60 * 60; // 1 hour
+    // const maxTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    // const startTime = Date.now();
+    // const balanceChange = useCallback(() => {
+    //     const updateInterval = 60 * 1000; // 1 minute in milliseconds
+    //     const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+    //     const startTime = Date.now();
 
-        const intervalId = setInterval(() => {
-            setElapsedTime((prevTime) => {
-                const newTime = prevTime + updateInterval;
+    //     const intervalId = setInterval(() => {
+    //         setElapsedTime((prevTime) => {
+    //             const elapsedTime = Date.now() - startTime;
 
-                // If we've reached or exceeded 24 hours, stop updating
-                if (newTime >= maxTime) {
-                    clearInterval(intervalId);
-                    return maxTime;
-                }
+    //             // If we've reached or exceeded 24 hours, stop updating
+    //             if (elapsedTime >= maxTime) {
+    //                 clearInterval(intervalId);
+    //                 return maxTime;
+    //             }
 
-                // Generate a random multiplier between 1 and 10
-                const randomMultiplier = Math.random() * 9 + 1;
-                const newBalance = balance * randomMultiplier;
+    //             // Generate a random multiplier between 1 and 10
+    //             const randomMultiplier = Math.random() * 9 + 1;
 
-                // Update the balance, rounding to two decimal places
-                setBalance(parseFloat(newBalance.toFixed(2)));
+    //             // Use a functional state update to access the current balance
+    //             setBalance((currentBalance: any) => {
+    //                 // Ensure currentBalance is a number
+    //                 const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || 0;
+    
+    //                 let newBalance = numericBalance * randomMultiplier;
+    //                 newBalance = Math.max(0, Math.min(newBalance, balance*10))
+    //                 console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`); // Log balance change
+    //                 return parseFloat(newBalance.toFixed(2)); // Round to 2 decimal places
+    //             });
+    //             toast.success("Profit!")
+    //             return elapsedTime;
+    //         });
+    //     }, updateInterval);
 
-                return newTime;
-            });
-        }, updateInterval); // Update every hour
+    //     // Clean up the interval when the component unmounts
+    //     return () => clearInterval(intervalId);
+    // }, []);
 
-        // Clean up the interval when the component unmounts
-        return () => clearInterval(intervalId);
-    }
 
     function handleEdit() {
         setEdit(false)
@@ -179,14 +192,17 @@ const Page = () => {
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(wallet);
-            alert('Text copied to clipboard!');
+            toast.success('Text copied to clipboard!')
         } catch (error) {
             console.log('Failed to copy text:', error);
         }
     };
     async function handleWallet() {
         try {
-
+            if (verify === "Not verified") {
+                toast.error("Please verify your account!")
+                return;
+            }
             setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
         } catch (error: any) {
             return console.log(error.message)
@@ -194,6 +210,10 @@ const Page = () => {
     }
     async function handleWalletEth() {
         try {
+            if (verify === "Not verified") {
+                toast.error("Please verify your account!")
+                return;
+            }
             setWallet("0x84E374B803491D9fC6a71889E25a16f37B6747Ed")
         } catch (error: any) {
             return console.log(error.message)
@@ -201,6 +221,10 @@ const Page = () => {
     }
     async function handleWalletLtc() {
         try {
+            if (verify === "Not verified") {
+                toast.error("Please verify your account!")
+                return;
+            }
             setWallet("ltc1qa2c6wc39utg246rmt38x62src8dct3tvykg3me")
         } catch (error: any) {
             return console.log(error.message)
@@ -208,6 +232,10 @@ const Page = () => {
     }
     async function handleWalletUSDT() {
         try {
+            if (verify === "Not verified") {
+                toast.error("Please verify your account!")
+                return;
+            }
             setWallet("TNeyjudVdkxjukNYABqATzne58aTmXnu9U")
         } catch (error: any) {
             return console.log(error.message)
@@ -302,7 +330,9 @@ const Page = () => {
         avatarFun()
         balFun()
         fetchData()
-        balanceChange()
+        // balanceChange()
+        // const stopBalanceChange = balanceChange();
+        // return stopBalanceChange;
     }, [data])
 
     return (
@@ -452,7 +482,9 @@ const Page = () => {
                                             Deposit
                                         </h1>
                                         <p className='mb-2'>Choose the cryptocurrency to fund with</p>
-
+                                        {/* <a href="https://nowpayments.io/donation?api_key=WXY7XDZ-JRV4MR2-JB4V22A-H1RK924" target="_blank" rel="noreferrer noopener">
+                                            <img src="https://nowpayments.io/images/embeds/donation-button-white.svg" alt="Cryptocurrency & Bitcoin donation button by NOWPayments" />
+                                        </a> */}
                                         <div className='flex  cypto'>
                                             <div>
                                                 <button className='bg-yellow-200 ml-2 px-4 py-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-yellow-500' onClick={handleWallet}>BTC</button>
