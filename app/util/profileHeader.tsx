@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Popup from '../../lib/popup';
+import PaymentDetails from '../util/userPaymentDetails'
+
 
 interface HeaderUserProps {
     username: string;
@@ -18,6 +20,7 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [close, setClose] = useState(false); // Start with false to hide popup initially
+    const [open,setOpen]= useState(false)
     const router = useRouter();
 
     const logOut = async () => {
@@ -98,7 +101,8 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
                     </li>
                 </ul>
             </div>
-            {close && <Popup setClose={setClose} balance={balance} />} {/* Render Popup conditionally */}
+            {close && <PaymentDetails setClose={setClose} setOpen={setOpen}/>}
+            {open && <Popup setOpen={setOpen}  />}
         </header>
     );
 };
