@@ -48,58 +48,12 @@ const Page = () => {
     const [modal, setModal] = useState(false)
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
 
-    // Handle file selection
-    // const handleFileChange = (e, setImage) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         setImage(file);
-    //         setEdit(prev => !prev)
-    //     }
-    // };
+
     async function Test() {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
     }
-    // const updateInterval = 1000 * 60 * 60; // 1 hour
-    // const maxTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-    // const startTime = Date.now();
-    // const balanceChange = useCallback(() => {
-    //     const updateInterval = 60 * 1000; // 1 minute in milliseconds
-    //     const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
-    //     const startTime = Date.now();
-
-    //     const intervalId = setInterval(() => {
-    //         setElapsedTime((prevTime) => {
-    //             const elapsedTime = Date.now() - startTime;
-
-    //             // If we've reached or exceeded 24 hours, stop updating
-    //             if (elapsedTime >= maxTime) {
-    //                 clearInterval(intervalId);
-    //                 return maxTime;
-    //             }
-
-    //             // Generate a random multiplier between 1 and 10
-    //             const randomMultiplier = Math.random() * 9 + 1;
-
-    //             // Use a functional state update to access the current balance
-    //             setBalance((currentBalance: any) => {
-    //                 // Ensure currentBalance is a number
-    //                 const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || 0;
-
-    //                 let newBalance = numericBalance * randomMultiplier;
-    //                 newBalance = Math.max(0, Math.min(newBalance, balance*10))
-    //                 console.log(`Previous Balance: £${numericBalance.toFixed(2)}, New Balance: £${newBalance.toFixed(2)}`); // Log balance change
-    //                 return parseFloat(newBalance.toFixed(2)); // Round to 2 decimal places
-    //             });
-    //             toast.success("Profit!")
-    //             return elapsedTime;
-    //         });
-    //     }, updateInterval);
-
-    //     // Clean up the interval when the component unmounts
-    //     return () => clearInterval(intervalId);
-    // }, []);
-
+   
 
     function handleEdit() {
         setEdit(false)
@@ -108,7 +62,7 @@ const Page = () => {
         try {
             const res = await axios.get('/api/users/me');
             const userData = res.data.data;
-
+    
             setUser({
                 fullName: userData.fullName || '',
                 phone: userData.phone || '',
@@ -117,77 +71,118 @@ const Page = () => {
             });
             setEmail(userData.email);
             setUsername(userData.username);
-            // setAmount(userData)
-            setBalance(res.data.data.investment)
-        } catch (error: any) {
-            console.log("Error fetching user data:", error);
+            setBalance(userData.investment || 0);
+        } catch (error:any) {
+            if (error.response) {
+                const statusCode = error.response.status;
+                // Handle specific HTTP error status codes
+                switch (statusCode) {
+                    case 400:
+                        console.error("Bad Request - Invalid data provided.");
+                        break;
+                    case 401:
+                        console.error("Unauthorized - Please log in.");
+                        // Optional: Redirect to login page or show login prompt
+                        break;
+                    case 403:
+                        console.error("Forbidden - You do not have permission.");
+                        break;
+                    case 404:
+                        console.error("User data not found.");
+                        break;
+                    case 500:
+                        console.error("Internal Server Error - Try again later.");
+                        break;
+                    default:
+                        console.error(`Unexpected error occurred: ${statusCode}`);
+                }
+            } else {
+                // Handle network errors or unexpected issues
+                console.error("Network error or unknown error:", error.message);
+            }
         }
     };
+    
     const editUserData = async () => {
         try {
             await axios.put('/api/users/me', user);
-            setEdit(false)
-        } catch (error: any) {
-            console.log("Failed to update", error.message)
+            toast.success("Update successful!")
+            setEdit(false);
+        } catch (error:any) {
+            if (error.response) {
+                const statusCode = error.response.status;
+    
+                // Handle specific HTTP error codes
+                switch (statusCode) {
+                    case 400:
+                        console.error("Bad Request - Please check the data provided.");
+                        break;
+                    case 401:
+                        console.error("Unauthorized - You need to log in.");
+                        // Optionally redirect to login or show a login prompt
+                        break;
+                    case 403:
+                        console.error("Forbidden - You don't have permission to edit this data.");
+                        break;
+                    case 404:
+                        console.error("User not found - Unable to update.");
+                        break;
+                    case 500:
+                        console.error("Server error - Please try again later.");
+                        break;
+                    default:
+                        console.error(`Unexpected error: ${statusCode}`);
+                }
+            } else {
+                // Handle network or unexpected errors
+                console.error("Failed to update due to network error or unknown issue:", error.message);
+            }
         }
-    }
-    // const initializePay = async () => {
-    //     if (typeof window !== 'undefined') {
-    //         const PaystackPop = (await import('@paystack/inline-js')).default;
-    //         try {
-    //             const popup = new PaystackPop();
-    //             const pay = await axios.post('/api/payment', { email, amount });
-    //             const access_code = pay.data.data.access_code;
-    //             popup.resumeTransaction(access_code);
-    //             toast.success("Payment initialised successfully");
-    //         } catch (error: any) {
-    //             toast.error("Payment failed", error.message);
-    //         }
-    //     } else {
-    //         console.error("Paystack can only be initialized in the browser.");
-    //     }
-    // };
-    // const getTransactions = async () => {
-    //     try {
-    //         const data = await axios.get('/api/payment')
-    //         const transactions = data.data.data.data
-    //         const extractedData = transactions.map((transaction: { customer: { email: any; }; status: any; paid_at: any; channel: any; amount: any; }) => ({
-    //             customerEmail: transaction.customer.email,
-    //             status: transaction.status,
-    //             paid_at: transaction.paid_at,
-    //             channel: transaction.channel,
-    //             customerPayment: transaction.amount
-    //         }));
-
-    //         // console.log("Transactions:", extractedData[0].customerEmail);
-    //     } catch (error: any) {
-    //         // console.log("Failed to get the list", error.message)
-    //         toast.error("Failed to get the list", error.message)
-    //     }
-    // }
+    };
+    
 
     const balFun = async () => {
         try {
             const res = await axios.get('/api/users/me');
-            setBalance(res.data.data.investment)
-        } catch (error: any) {
-            console.log(error.message)
+            setBalance(res.data.data.investment);
+        } catch (error:any) {
+            if (error.response) {
+                const statusCode = error.response.status;
+    
+                // Handle specific HTTP error codes
+                switch (statusCode) {
+                    case 400:
+                        console.error("Bad Request - Unable to retrieve balance.");
+                        break;
+                    case 401:
+                        console.error("Unauthorized - Please log in to view your balance.");
+                        // Optionally, redirect to login page or show a login prompt
+                        break;
+                    case 403:
+                        console.error("Forbidden - You do not have access to this information.");
+                        break;
+                    case 404:
+                        console.error("User not found - Unable to retrieve balance.");
+                        break;
+                    case 500:
+                        console.error("Server error - Please try again later.");
+                        break;
+                    default:
+                        console.error(`Unexpected error: ${statusCode}`);
+                }
+            } else {
+                // Handle network or unknown errors
+                console.error("Failed to fetch balance due to network error or unknown issue:", error.message);
+            }
         }
-    }
+    };
+    
     function statusFun() {
         // console.log("Clicked")
         setVerificationStatus(true)
 
     }
-    // async function test() {
-    //     console.log("test")
-    //     try {
-    //         const binance = await axios.post('/api/binance')
-    //         console.log("binance:", binance)
-    //     } catch (error: any) {
-    //         console.log(error.message)
-    //     }
-    // }
+  
 
     const handleCopy = async () => {
         try {
@@ -251,34 +246,64 @@ const Page = () => {
         }
     }
     const handleImageChange = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+    
         try {
-            e.preventDefault()
-
-            const data = new FormData()
-            data.set('file', profileImage)
+            if (!profileImage) {
+                toast.error("Please select an image to upload.");
+                return;
+            }
+    
+            const data = new FormData();
+            data.set('file', profileImage);
+    
             const res = await fetch('/api/users/edit/image', {
                 method: 'PUT',
-                body: data
+                body: data,
             });
-            if (!res.ok) throw new Error(await res.text())
+    
+            if (!res.ok) {
+                const errorMessage = await res.text();
+                toast.error(errorMessage || "Failed to upload image.");
+            }
+    
             setModal(false);
             toast.success("Upload successful!");
-        } catch (error) {
-            toast.error("Profile image upload unsuccessful");
+    
+        } catch (error: unknown) {
+            console.error("Error uploading profile image:", error);
+    
+            if (error instanceof TypeError) {
+                toast.error("Network error. Please check your connection.");
+            } else if (error instanceof Error) {
+                toast.error(error.message || "Profile image upload unsuccessful.");
+            } else {
+                toast.error("An unknown error occurred during the upload.");
+            }
         }
     };
+    
     const avatarFun = async () => {
         try {
             const response = await axios.get('/api/users/edit/image');
-            if (response.data.success) {
+    
+            if (response.data?.success) {
                 setImage(response.data.image); // Set the Base64 image string
             } else {
-                console.log(response.data.message);
+                console.error("Failed to fetch image:", response.data?.message || "Unknown error occurred.");
+                toast.error(response.data?.message || "Could not load profile image.");
             }
         } catch (error: any) {
-            console.log(error.message);
+            if (axios.isAxiosError(error)) {
+                console.error("API request failed:", error.response?.data?.message || error.message);
+                toast.error(error.response?.data?.message || "Network or server error. Please try again.");
+            } else {
+                console.error("Unexpected error:", error);
+                toast.error("An unexpected error occurred.");
+            }
         }
     };
+    
     const handleClose = async () => {
         setVerificationStatus(false)
     }
@@ -380,9 +405,6 @@ const Page = () => {
         avatarFun()
         balFun()
         fetchData()
-        // balanceChange()
-        // const stopBalanceChange = balanceChange();
-        // return stopBalanceChange;
     }, [data])
 
     return (
@@ -413,6 +435,8 @@ const Page = () => {
                                 </div>
                             </div>
                         </div>
+                        <Toaster />
+
                         <button onClick={balanceChange}>Balnce change</button>
                         <div className="bg-white shadow rounded-lg">
                             <ul className="list-none">

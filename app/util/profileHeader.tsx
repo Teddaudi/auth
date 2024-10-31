@@ -6,8 +6,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Popup from '../../lib/popup';
-import PaymentDetails from '../util/userPaymentDetails'
-
+import PaymentDetails from '../util/userPaymentDetails';
 
 interface HeaderUserProps {
     username: string;
@@ -20,16 +19,21 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [close, setClose] = useState(false); // Start with false to hide popup initially
-    const [open,setOpen]= useState(false)
+    const [open, setOpen] = useState(false);
+    const [money, setMoney] = useState(0);
+    const [loading, setLoading] = useState(false); // Loading state for logout
     const router = useRouter();
 
     const logOut = async () => {
+        setLoading(true); // Set loading to true at the start of the request
         try {
             await axios.get('/api/users/logout');
             toast.success('Logout successful');
             router.push('/signin');
         } catch (error: any) {
             toast.error(error.message);
+        } finally {
+            setLoading(false); // Stop loading when the request completes
         }
     };
 
@@ -52,11 +56,11 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     }, [isDropdownOpen]);
 
     const toggleSidebar = () => {
-        setIsSidebarCollapsed(prev => !prev);
+        setIsSidebarCollapsed((prev) => !prev);
     };
 
     const toggleUserDropdown = () => {
-        setIsDropdownOpen(prev => !prev);
+        setIsDropdownOpen((prev) => !prev);
     };
 
     return (
@@ -93,16 +97,20 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
                                 </li>
                             )}
                             <li className="mb-1 hover:bg-gray-50 text-gray-700 hover:text-gray-900">
-                                <button className="block px-5 py-2 w-full text-left" onClick={logOut}>
-                                    Logout
+                                <button
+                                    className={`block px-5 py-2 w-full text-left ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    onClick={logOut}
+                                    disabled={loading} // Disable button while loading
+                                >
+                                    {loading ? "Logging out..." : "Logout"}
                                 </button>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-            {close && <PaymentDetails setClose={setClose} setOpen={setOpen}/>}
-            {open && <Popup setOpen={setOpen}  />}
+            {close && <PaymentDetails setClose={setClose} setOpen={setOpen} setMoney={setMoney} />}
+            {open && <Popup setOpen={setOpen} money={money} />}
         </header>
     );
 };

@@ -2,39 +2,52 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
-const PaymentDetails = ({ setClose ,setOpen}) => {
+const PaymentDetails = ({ setClose, setOpen, setMoney }) => {
     const [selectedCrypto, setSelectedCrypto] = useState('Select Cryptocurrency');
     const [showDropdown, setShowDropdown] = useState(false);
-    const [widthdraw, setWithdraw] = useState(0)
+    const [widthdraw, setWithdraw] = useState(0);
+    const [loading, setLoading] = useState(false);  // Loading state
 
     const handleCryptoChange = (crypto) => {
         setSelectedCrypto(crypto);
-        setShowDropdown(false); // Close the dropdown after selection
+        setShowDropdown(false);
     };
 
     const toggleDropdown = () => {
-        setShowDropdown((prev) => !prev); // Toggle dropdown visibility
+        setShowDropdown((prev) => !prev);
     };
 
-
-
     async function handleCashout() {
+        setLoading(true);  // Set loading to true before the request
         try {
-            const data = await axios.get('/api/users/me')
-            const current = data.data.data.investment
-            const totalWidrawal = current- widthdraw
+            const data = await axios.get('/api/users/me');
+            const current = data.data.data.investment;
+
+            if (Number(widthdraw) > current) {
+                toast.error("Insufficient funds!");
+                setLoading(false);  // Stop loading if insufficient funds
+                return;
+            }
+
+            const totalWithdrawal = current - Number(widthdraw);
             const res = await axios.put('/api/balance', {
-                amount: totalWidrawal
+                amount: totalWithdrawal
             });
+
             if (res) {
-                toast.success("Withdrawal Initiated!")
-                setClose(false)
-                setOpen(true)
+                toast.success("Withdrawal Initiated!");
+                setClose(false);
+                setMoney(Number(widthdraw));
+                setOpen(true);
             }
         } catch (error) {
-            console.log(error.message)
+            console.log(error.message);
+            toast.error("An error occurred. Please try again.");
+        } finally {
+            setLoading(false);  // Stop loading after the request completes
         }
     }
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg shadow-lg w-96 p-8 space-y-4">
@@ -76,7 +89,7 @@ const PaymentDetails = ({ setClose ,setOpen}) => {
                 <input
                     type="number"
                     placeholder="Enter amount"
-                    onChange={(e) => setWithdraw(e.target.value)}
+                    onChange={(e) => setWithdraw(Number(e.target.value))}
                     className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
 
@@ -88,10 +101,11 @@ const PaymentDetails = ({ setClose ,setOpen}) => {
                         Close
                     </button>
                     <button
-                        className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+                        className={`bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={handleCashout}
+                        disabled={loading}  // Disable button while loading
                     >
-                        Proceed to Cashout
+                        {loading ? "Processing..." : "Proceed to Cashout"}
                     </button>
                 </div>
             </div>
