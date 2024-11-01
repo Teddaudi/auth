@@ -33,13 +33,13 @@ const Page: React.FC<{ searchParams: SearchParams }> = ({ searchParams }) => {
     const balance = searchParams.withdrawal || '0';
 
     return (
-        <div className="flex items-center justify-center min-h-screen text-center">
+        <div className="flex items-center h-screen justify-center min-h-screen text-center bg-black">
             <div className="flex flex-col items-center max-w-xs pl-10 pr-10 py-4 rounded-lg space-y-6">
                 <div className='mb-4'>
-                    <h1 className='font-extrabold text-lg'>Total Cashout: £{balance}</h1>
+                    <h1 className='font-extrabold text-lg text-white'>Total Cashout: £{balance}</h1>
                 </div>
                 <div className="spinner"></div>
-                <p className="mt-2 font-bold text-red-500 text-lg">Transaction pending...</p>
+                <p className="mt-2 font-bold text-red-500 text-lg text-white">Transaction pending...</p>
             </div>
         </div>
     );
