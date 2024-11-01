@@ -15,7 +15,7 @@ import UploadId from '../util/uploadId'
 import { IoCopyOutline } from "react-icons/io5";
 import Modal from "../../lib/Modal"
 import avatarImg from "../../images/avatar.png"
-
+import VerificationMessage from "../../lib/verificationPop"
 
 const Page = () => {
     const [edit, setEdit] = useState(false)
@@ -47,7 +47,7 @@ const Page = () => {
     const [profileImage, setProfileImage] = useState("")
     const [modal, setModal] = useState(false)
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
-
+    const [verificationMessages, setVerificationMessages]= useState(true)
 
     async function Test() {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
@@ -321,26 +321,62 @@ const Page = () => {
         }
     }
 
+    // const handleSubmit = async (e: any) => {
+    //     try {
+    //         e.preventDefault()
+
+    //         const data = new FormData()
+    //         data.set('file', id1)
+    //         const res = await fetch('/api/users/verification', {
+    //             method: 'POST',
+    //             body: data
+    //         });
+    //         // console.log("res:",res)
+    //         if (!res.ok) throw new Error(await res.text())
+
+    //         // await axios.post("/api/users/verification" ,{id1,id2} )
+    //         const userData = await axios.get("/api/users/me")
+    //         console.log("userData:", userData.data.data.investment)
+    //         toast.success("Verification Successful!")
+    //         setVerificationStatus(false)
+    //     } catch (error: any) {
+    //         return toast.error("Unable to verify credentials!")
+    //     }
+    // };
     const handleSubmit = async (e: any) => {
         try {
-            e.preventDefault()
-
-            const data = new FormData()
-            data.set('file', id1)
+            e.preventDefault();
+    
+            // Check if a file is selected
+            if (!id1) {
+                toast.error("No file selected. Please upload a file for verification.");
+                return; // Stop execution if no file is selected
+            }
+    
+            // Check if the file size is greater than 2 MB
+            if (id1.size > 2 * 1024 * 1024) { // 2 * 1024 * 1024 bytes = 2 MB
+                toast.error("File size exceeds 2 MB. Please upload a smaller file.");
+                return; // Stop execution if the file is too large
+            }
+    
+            const data = new FormData();
+            data.set('file', id1);
+    
             const res = await fetch('/api/users/verification', {
                 method: 'POST',
-                body: data
+                body: data,
             });
-            // console.log("res:",res)
-            if (!res.ok) {
-                return toast.error("Please try again later!")
-            }
-
-            // await axios.post("/api/users/verification" ,{id1,id2} )
-            toast.success("Verification Successful!")
-            setVerificationStatus(false)
+    
+            if (!res.ok) throw new Error(await res.text());
+    
+            const userData = await axios.get("/api/users/me");
+            console.log("userData:", userData.data.data.investment);
+    
+            toast.success("Verification Successful!");
+            setVerificationMessages(true)
+            setVerificationStatus(false);
         } catch (error: any) {
-            return toast.error("Unable to verify credentials!")
+            toast.error("Unable to verify credentials!");
         }
     };
     
@@ -453,6 +489,7 @@ const Page = () => {
                                     >{!verificationStatus && verify}</div>
                                     {verificationStatus && <UploadId setId1={setId1} setId2={setId2} handleClose={handleClose} handleSubmit={handleSubmit} />}
                                     {/* {verificationStatus || editId && <UploadId handleSubmit={handleSubmit} setEditId={setEditId} loading={loading} handleFileChange={handleFileChange} setFaceImage={setFaceImage} setDocumentImage={setDocumentImage} />} */}
+                                {verificationMessages && <VerificationMessage setVerificationMessages={setVerificationMessages}/>}
                                 </li>
                             </ul>
                         </div>
