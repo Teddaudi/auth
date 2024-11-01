@@ -214,6 +214,14 @@ const Page = () => {
                             <FaUsers size={30} color='orange' />
                         </div>
 
+                        {/* <div className="bg-slate-50 p-5 m-2 flex justify-between items-center shadow">
+                            <div>
+                                <h3 className="font-bold">Deleted Users</h3>
+                                <p className="text-gray-500">{usersDeleted}</p>
+                            </div>
+                            <FaUsers size={30} color='red' />
+                        </div> */}
+
                     </div>
                     <Toaster />
                     <div className="grid grid-cols-1 gap-2 p-4 lg:grid-cols-2">
@@ -231,10 +239,13 @@ const Page = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                   
+                                    {/* {userData.map((user, index) => (
+                                    ))} */}
                                     {users.map((user: any, index: any) => (
                                         <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                                  
+                                            {/* <td className="p-3">
+                                                <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="" />
+                                            </td> */}
                                             <td className="p-3">{user.fullName === "Provide your full name" ? "No name provided" : user.fullName}</td>
                                             <td className="p-3">{user.email}</td>
                                             <td className="p-3">
@@ -263,6 +274,12 @@ const Page = () => {
                                             <td className="p-3"> <MdDelete className='text-red-300 hover:text-red-600 cursor-pointer' onClick={() => deleteUser(user)} /></td>
                                             <td className="p-3"> <RiSave3Fill className='text-green-300 hover:text-green-600 cursor-pointer' size={20} onClick={() => saveDeposit(user)} /></td>
                                             <td className="p-3"> <VscDebugStart className='text-red-300 hover:text-red-600 cursor-pointer' size={20} onClick={() => handleTrade(user)} /></td>
+
+                                            {/* <td className="p-3 text-center">
+                                                <div className="flex justify-center gap-2">
+                                                    <i title="Delete" className="fa-solid fa-trash p-1 text-red-500 rounded-full cursor-pointer">Delete</i>
+                                                </div>
+                                            </td> */}
                                         </tr>
                                     ))}
                                 </tbody>
