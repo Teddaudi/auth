@@ -354,10 +354,10 @@ const Page = () => {
             }
     
             // Check if the file size is greater than 2 MB
-            if (id1.size > 2 * 1024 * 1024) { // 2 * 1024 * 1024 bytes = 2 MB
-                toast.error("File size exceeds 2 MB. Please upload a smaller file.");
-                return; // Stop execution if the file is too large
-            }
+            // if (id1.size > 2 * 1024 * 1024) { // 2 * 1024 * 1024 bytes = 2 MB
+            //     toast.error("File size exceeds 2 MB. Please upload a smaller file.");
+            //     return; // Stop execution if the file is too large
+            // }
     
             const data = new FormData();
             data.set('file', id1);
