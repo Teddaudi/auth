@@ -332,7 +332,9 @@ const Page = () => {
                 body: data
             });
             // console.log("res:",res)
-            if (!res.ok) throw new Error(await res.text())
+            if (!res.ok) {
+                return toast.error("Please try again later!")
+            }
 
             // await axios.post("/api/users/verification" ,{id1,id2} )
             toast.success("Verification Successful!")
@@ -341,6 +343,7 @@ const Page = () => {
             return toast.error("Unable to verify credentials!")
         }
     };
+    
     const originalWarn = console.warn;
     console.warn = (...args) => {
         if (typeof args[0] === 'string' && args[0].includes('Image with src')) {

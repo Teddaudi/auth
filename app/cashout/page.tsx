@@ -26,11 +26,11 @@ import React from 'react';
 import { BsCashCoin } from "react-icons/bs";
 
 interface SearchParams {
-    balance?: string;
+    withdrawal?: string;
 }
 
 const Page: React.FC<{ searchParams: SearchParams }> = ({ searchParams }) => {
-    const balance = searchParams.balance || '0';
+    const balance = searchParams.withdrawal || '0';
 
     return (
         <div className="flex items-center justify-center min-h-screen text-center">

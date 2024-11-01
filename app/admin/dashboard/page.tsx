@@ -70,14 +70,13 @@ const Page = () => {
             const verifiedUsers = finalUsers.filter((user: any) => user.idVerification === true).length
             const totalInvestment = finalUsers.reduce((sum: number, user: any) => {
                 const investment = parseFloat(user.investment);
-
                 return sum + (isNaN(investment) ? 0 : investment);
             }, 0);
             setInvestment(totalInvestment)
             setVerify(verifiedUsers)
             setTotalUsers(users.data.data.length)
             setUsers(users.data.data)
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
                 // Handle specific HTTP error status codes
@@ -223,6 +222,13 @@ const Page = () => {
                             </div>
                             <BsCashCoin size={30} color='green' />
                         </div>
+                        {/* <div className="bg-slate-50 p-5 m-2 rounded-md flex justify-between items-center shadow">
+                            <div>
+                                <h3 className="font-bold">Total Users</h3>
+                                <p className="text-gray-500">{!totalUsers ? "Loading..." : totalUsers}</p>
+                            </div>
+                            <FaUsers size={30} color='gray' />
+                        </div> */}
 
                         <div className="bg-slate-50 p-5 m-2 flex justify-between items-center shadow">
                             <div>
