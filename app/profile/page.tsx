@@ -437,7 +437,7 @@ const Page = () => {
                         </div>
                         <Toaster />
 
-                        <button onClick={balanceChange}>Balnce change</button>
+                        {/* <button onClick={balanceChange}>Balnce change</button> */}
                         <div className="bg-white shadow rounded-lg">
                             <ul className="list-none">
                                 <li className="flex justify-between items-center p-4 border-b">
