@@ -77,8 +77,34 @@ const Page = () => {
             setVerify(verifiedUsers)
             setTotalUsers(users.data.data.length)
             setUsers(users.data.data)
-        } catch (error: any) {
-            console.log(error.message)
+        } catch (error:any) {
+            if (error.response) {
+                const statusCode = error.response.status;
+                // Handle specific HTTP error status codes
+                switch (statusCode) {
+                    case 400:
+                        console.error("Bad Request - Invalid data provided.");
+                        break;
+                    case 401:
+                        console.error("Unauthorized - Please log in.");
+                        // Optional: Redirect to login page or show login prompt
+                        break;
+                    case 403:
+                        console.error("Forbidden - You do not have permission.");
+                        break;
+                    case 404:
+                        console.error("User data not found.");
+                        break;
+                    case 500:
+                        console.error("Internal Server Error - Try again later.");
+                        break;
+                    default:
+                        console.error(`Unexpected error occurred: ${statusCode}`);
+                }
+            } else {
+                // Handle network errors or unexpected issues
+                console.error("Network error or unknown error:", error.message);
+            }
         }
     }
 
