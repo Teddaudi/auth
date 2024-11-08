@@ -154,61 +154,129 @@ const Page = () => {
         const userIds = user._id;
         await balanceChange(initialUserBalance, userIds)
     }
+    // const balanceChange = useCallback((initialBalance: number, userIds: any) => {
+    //     const updateInterval = 60 * 1000; // 1 minute in milliseconds
+    //     const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+    //     const startTime = Date.now();
+    //     const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
+    //     const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
+
+    //     const intervalId = setInterval(() => {
+    //         setElapsedTime((prevTime) => {
+    //             const elapsedTime = Date.now() - startTime;
+
+    //             if (elapsedTime >= maxTime) {
+    //                 clearInterval(intervalId);
+    //                 return maxTime;
+    //             }
+
+    //             // Generate a random multiplier for the balance adjustment
+    //             const randomMultiplier = Math.random() * 10;
+    //             const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
+    //             const adjustment = direction * randomMultiplier * effectiveInitialBalance;
+
+    //             setBalance(async (currentBalance: any) => {
+    //                 const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
+
+    //                 // Calculate the new balance with adjustment
+    //                 let newBalance = numericBalance + adjustment;
+    //                 const formattedBalance = parseFloat(newBalance.toFixed(2));
+    //                 await axios.put('/api/users/edit/deposit', {
+    //                     userId: userIds,
+    //                     deposit: formattedBalance
+    //                 });
+    //                 // Check if we've reached maxBalance
+    //                 if (newBalance >= maxBalance) {
+    //                     clearInterval(intervalId); // Stop updating if maxBalance is reached
+    //                     (async () => {
+    //                         try {
+    //                             const formattedBalance = parseFloat(newBalance.toFixed(2));
+    //                             await axios.put('/api/users/edit/deposit', {
+    //                                 userId: userIds,
+    //                                 deposit: formattedBalance
+    //                             });
+    //                             toast.success("Maximum Price Reached");
+    //                         } catch (error) {
+    //                             console.error("Error updating balance:", error);
+    //                             toast.error("Failed to update balance");
+    //                         }
+    //                     })();
+    //                 }
+
+    //                 return parseFloat(newBalance.toFixed(2));
+    //             });
+
+    //             return elapsedTime;
+    //         });
+    //     }, updateInterval);
+
+    //     return () => clearInterval(intervalId);
+    // }, []);
     const balanceChange = useCallback((initialBalance: number, userIds: any) => {
         const updateInterval = 60 * 1000; // 1 minute in milliseconds
         const maxTime = 15 * 60 * 1000; // 15 minutes in milliseconds
         const startTime = Date.now();
         const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
         const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
-
+    
         const intervalId = setInterval(() => {
             setElapsedTime((prevTime) => {
                 const elapsedTime = Date.now() - startTime;
-
+    
                 if (elapsedTime >= maxTime) {
                     clearInterval(intervalId);
                     return maxTime;
                 }
-
+    
                 // Generate a random multiplier for the balance adjustment
                 const randomMultiplier = Math.random() * 10;
                 const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
                 const adjustment = direction * randomMultiplier * effectiveInitialBalance;
-
+    
                 setBalance(async (currentBalance: any) => {
                     const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
-
+    
                     // Calculate the new balance with adjustment
                     let newBalance = numericBalance + adjustment;
-
+                    const formattedBalance = parseFloat(newBalance.toFixed(2));
+    
+                    try {
+                        await axios.put('/api/users/edit/deposit', {
+                            userId: userIds,
+                            deposit: formattedBalance
+                        });
+                    } catch (error) {
+                        console.error("Error updating balance:", error);
+                        toast.error("Failed to update balance");
+                    }
+    
                     // Check if we've reached maxBalance
                     if (newBalance >= maxBalance) {
                         clearInterval(intervalId); // Stop updating if maxBalance is reached
                         (async () => {
                             try {
-                                const formattedBalance = parseFloat(newBalance.toFixed(2));
                                 await axios.put('/api/users/edit/deposit', {
                                     userId: userIds,
                                     deposit: formattedBalance
                                 });
                                 toast.success("Maximum Price Reached");
                             } catch (error) {
-                                console.error("Error updating balance:", error);
-                                toast.error("Failed to update balance");
+                                console.error("Error updating balance after reaching max:", error);
+                                toast.error("Failed to update balance after reaching max");
                             }
                         })();
                     }
-
+    
                     return parseFloat(newBalance.toFixed(2));
                 });
-
+    
                 return elapsedTime;
             });
         }, updateInterval);
-
+    
         return () => clearInterval(intervalId);
     }, []);
-
+    
     return (
         <>
             <Header />
