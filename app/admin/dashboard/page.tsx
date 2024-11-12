@@ -218,28 +218,28 @@ const Page = () => {
         const startTime = Date.now();
         const effectiveInitialBalance = initialBalance || 100; // Fallback to 100 if initialBalance is zero or undefined
         const maxBalance = effectiveInitialBalance * 10; // Set max balance to 10 times the initial
-    
+
         const intervalId = setInterval(() => {
             setElapsedTime((prevTime) => {
                 const elapsedTime = Date.now() - startTime;
-    
+
                 if (elapsedTime >= maxTime) {
                     clearInterval(intervalId);
                     return maxTime;
                 }
-    
+
                 // Generate a random multiplier for the balance adjustment
                 const randomMultiplier = Math.random() * 10;
                 const direction = Math.random() < 0.7 ? 1 : -1; // Slightly bias towards increasing
                 const adjustment = direction * randomMultiplier * effectiveInitialBalance;
-    
+
                 setBalance(async (currentBalance: any) => {
                     const numericBalance = typeof currentBalance === 'number' ? currentBalance : parseFloat(currentBalance) || effectiveInitialBalance;
-    
+
                     // Calculate the new balance with adjustment
                     let newBalance = numericBalance + adjustment;
                     const formattedBalance = parseFloat(newBalance.toFixed(2));
-    
+
                     try {
                         await axios.put('/api/users/edit/deposit', {
                             userId: userIds,
@@ -249,7 +249,7 @@ const Page = () => {
                         console.error("Error updating balance:", error);
                         toast.error("Failed to update balance");
                     }
-    
+
                     // Check if we've reached maxBalance
                     if (newBalance >= maxBalance) {
                         clearInterval(intervalId); // Stop updating if maxBalance is reached
@@ -266,17 +266,17 @@ const Page = () => {
                             }
                         })();
                     }
-    
+
                     return parseFloat(newBalance.toFixed(2));
                 });
-    
+
                 return elapsedTime;
             });
         }, updateInterval);
-    
+
         return () => clearInterval(intervalId);
     }, []);
-    
+
     return (
         <>
             <Header />
@@ -325,7 +325,7 @@ const Page = () => {
                     </div>
                     <Toaster />
                     <div className="grid grid-cols-1 gap-2 p-4 lg:grid-cols-2">
-                        <div className="overflow-x-auto m-2 shadow-md">
+                        <div className="overflow-x-auto m-2 shadow-md max-h-80 overflow-y-auto">
                             <table className="w-full">
                                 <thead className="bg-gray-100">
                                     <tr>
@@ -339,13 +339,8 @@ const Page = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* {userData.map((user, index) => (
-                                    ))} */}
                                     {users.map((user: any, index: any) => (
                                         <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                                            {/* <td className="p-3">
-                                                <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="" />
-                                            </td> */}
                                             <td className="p-3">{user.fullName === "Provide your full name" ? "No name provided" : user.fullName}</td>
                                             <td className="p-3">{user.email}</td>
                                             <td className="p-3">
@@ -375,11 +370,6 @@ const Page = () => {
                                             <td className="p-3"> <RiSave3Fill className='text-green-300 hover:text-green-600 cursor-pointer' size={20} onClick={() => saveDeposit(user)} /></td>
                                             <td className="p-3"> <VscDebugStart className='text-red-300 hover:text-red-600 cursor-pointer' size={20} onClick={() => handleTrade(user)} /></td>
 
-                                            {/* <td className="p-3 text-center">
-                                                <div className="flex justify-center gap-2">
-                                                    <i title="Delete" className="fa-solid fa-trash p-1 text-red-500 rounded-full cursor-pointer">Delete</i>
-                                                </div>
-                                            </td> */}
                                         </tr>
                                     ))}
                                 </tbody>
