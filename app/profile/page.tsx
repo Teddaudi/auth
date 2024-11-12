@@ -16,6 +16,7 @@ import { IoCopyOutline } from "react-icons/io5";
 import Modal from "../../lib/Modal"
 import avatarImg from "../../images/avatar.png"
 import VerificationMessage from "../../lib/verificationPop"
+import { GrTransaction } from "react-icons/gr";
 
 const Page = () => {
     const [edit, setEdit] = useState(false)
@@ -40,20 +41,22 @@ const Page = () => {
     const router = useRouter()
     const [documentImage, setDocumentImage] = useState(null);
     const [faceImage, setFaceImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
     const [editId, setEditId] = useState(false)
     const [wallet, setWallet] = useState("")
     const [profileImage, setProfileImage] = useState("")
     const [modal, setModal] = useState(false)
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
-    const [verificationMessages, setVerificationMessages]= useState(true)
+    const [verificationMessages, setVerificationMessages] = useState(true)
+    const [clientWithdrawal, setClientWithdrawal] = useState<number | null>(null)
+    const [loading, setLoading] = useState<boolean>(true)
 
     async function Test() {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
     }
-   
+
 
     function handleEdit() {
         setEdit(false)
@@ -62,7 +65,7 @@ const Page = () => {
         try {
             const res = await axios.get('/api/users/me');
             const userData = res.data.data;
-    
+
             setUser({
                 fullName: userData.fullName || '',
                 phone: userData.phone || '',
@@ -72,7 +75,7 @@ const Page = () => {
             setEmail(userData.email);
             setUsername(userData.username);
             setBalance(userData.investment || 0);
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
                 // Handle specific HTTP error status codes
@@ -102,16 +105,16 @@ const Page = () => {
             }
         }
     };
-    
+
     const editUserData = async () => {
         try {
             await axios.put('/api/users/me', user);
             toast.success("Update successful!")
             setEdit(false);
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
-    
+
                 // Handle specific HTTP error codes
                 switch (statusCode) {
                     case 400:
@@ -139,16 +142,16 @@ const Page = () => {
             }
         }
     };
-    
+
 
     const balFun = async () => {
         try {
             const res = await axios.get('/api/users/me');
             setBalance(res.data.data.investment);
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
-    
+
                 // Handle specific HTTP error codes
                 switch (statusCode) {
                     case 400:
@@ -176,13 +179,13 @@ const Page = () => {
             }
         }
     };
-    
+
     function statusFun() {
         // console.log("Clicked")
         setVerificationStatus(true)
 
     }
-  
+
 
     const handleCopy = async () => {
         try {
@@ -247,32 +250,32 @@ const Page = () => {
     }
     const handleImageChange = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-    
+
         try {
             if (!profileImage) {
                 toast.error("Please select an image to upload.");
                 return;
             }
-    
+
             const data = new FormData();
             data.set('file', profileImage);
-    
+
             const res = await fetch('/api/users/edit/image', {
                 method: 'PUT',
                 body: data,
             });
-    
+
             if (!res.ok) {
                 const errorMessage = await res.text();
                 toast.error(errorMessage || "Failed to upload image.");
             }
-    
+
             setModal(false);
             toast.success("Upload successful!");
-    
+
         } catch (error: unknown) {
             console.error("Error uploading profile image:", error);
-    
+
             if (error instanceof TypeError) {
                 toast.error("Network error. Please check your connection.");
             } else if (error instanceof Error) {
@@ -282,11 +285,11 @@ const Page = () => {
             }
         }
     };
-    
+
     const avatarFun = async () => {
         try {
             const response = await axios.get('/api/users/edit/image');
-    
+
             if (response.data?.success) {
                 setImage(response.data.image); // Set the Base64 image string
             } else {
@@ -303,7 +306,7 @@ const Page = () => {
             }
         }
     };
-    
+
     const handleClose = async () => {
         setVerificationStatus(false)
     }
@@ -346,32 +349,32 @@ const Page = () => {
     const handleSubmit = async (e: any) => {
         try {
             e.preventDefault();
-    
+
             // Check if a file is selected
             if (!id1) {
                 toast.error("No file selected. Please upload a file for verification.");
                 return; // Stop execution if no file is selected
             }
-    
+
             // Check if the file size is greater than 2 MB
             // if (id1.size > 2 * 1024 * 1024) { // 2 * 1024 * 1024 bytes = 2 MB
             //     toast.error("File size exceeds 2 MB. Please upload a smaller file.");
             //     return; // Stop execution if the file is too large
             // }
-    
+
             const data = new FormData();
             data.set('file', id1);
-    
+
             const res = await fetch('/api/users/verification', {
                 method: 'POST',
                 body: data,
             });
-    
+
             if (!res.ok) throw new Error(await res.text());
-    
+
             const userData = await axios.get("/api/users/me");
             console.log("userData:", userData.data.data.investment);
-    
+
             toast.success("Verification Successful!");
             setVerificationMessages(true)
             setVerificationStatus(false);
@@ -379,7 +382,7 @@ const Page = () => {
             toast.error("Unable to verify credentials!");
         }
     };
-    
+
     const originalWarn = console.warn;
     console.warn = (...args) => {
         if (typeof args[0] === 'string' && args[0].includes('Image with src')) {
@@ -437,13 +440,29 @@ const Page = () => {
         return () => clearInterval(intervalId);
     }, [initialBalance]);
 
-
-
+    const withdrawalFun = async () => {
+        try {
+            const response = await axios.get('/api/users/withdrawal');
+            if (response.data && response.data.withdrawal) {
+                setClientWithdrawal(response.data.withdrawal.withdrawal);
+            } else {
+                console.error('Data structure is unexpected');
+            }
+            setLoading(false); // Stop loading once data is fetched
+        } catch (error:any) {
+            console.error('Error fetching data:', error.message);
+            setLoading(false); // Stop loading in case of error
+        }
+    };
     useEffect(() => {
+        withdrawalFun()
+    }, [loading])
+  
+    useEffect(() => {
+        fetchData()
         userStatus()
         avatarFun()
         balFun()
-        fetchData()
     }, [data])
 
     return (
@@ -489,10 +508,30 @@ const Page = () => {
                                     >{!verificationStatus && verify}</div>
                                     {verificationStatus && <UploadId setId1={setId1} setId2={setId2} handleClose={handleClose} handleSubmit={handleSubmit} />}
                                     {/* {verificationStatus || editId && <UploadId handleSubmit={handleSubmit} setEditId={setEditId} loading={loading} handleFileChange={handleFileChange} setFaceImage={setFaceImage} setDocumentImage={setDocumentImage} />} */}
-                                {verificationMessages && <VerificationMessage setVerificationMessages={setVerificationMessages}/>}
+                                    {verificationMessages && <VerificationMessage setVerificationMessages={setVerificationMessages} />}
                                 </li>
                             </ul>
                         </div>
+                        {loading ? (
+                            <div className="bg-white shadow rounded-lg mt-4">
+                                <p className="flex justify-between items-center p-4 border-b">Loading...</p>
+                            </div>
+                        ) : (
+                            clientWithdrawal !== null && clientWithdrawal !== 0 && (
+                                <div className="bg-white shadow rounded-lg mt-4">
+                                    <ul className="list-none">
+                                        <li className="flex justify-between items-center p-4 border-b">
+                                            <h6 className="flex items-center">
+                                                <GrTransaction size={20} color='green' className="mr-2" />
+                                                Total Withdrawal
+                                            </h6>
+                                            <p>£ {clientWithdrawal}</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )
+                        )}
+
                     </div>
                     {/* Main Content */}
                     <div className="w-full md:w-2/3 px-4">

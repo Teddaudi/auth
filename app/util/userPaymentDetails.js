@@ -28,7 +28,7 @@ const PaymentDetails = ({ setClose, setOpen, setMoney }) => {
                 setLoading(false);  // Stop loading if insufficient funds
                 return;
             }
-
+           await axios.put('/api/users/withdrawal', {withdrawal:widthdraw})
             const totalWithdrawal = current - Number(widthdraw);
             const res = await axios.put('/api/balance', {
                 amount: totalWithdrawal

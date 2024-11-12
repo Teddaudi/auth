@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
     },
     avatar:{
         type:Buffer
+    },
+    withdrawal:{
+        type:String,
+        default:"0"
     }
 });
 
