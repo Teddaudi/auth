@@ -521,11 +521,11 @@ const Page = () => {
                                 <div className="bg-white shadow rounded-lg mt-4">
                                     <ul className="list-none">
                                         <li className="flex justify-between items-center p-4 border-b">
-                                            <h6 className="flex items-center">
-                                                <GrTransaction size={20} color='green' className="mr-2" />
-                                                Total Withdrawal
+                                            <h6 className="flex items-center text-red-500">
+                                                <GrTransaction size={20} color='red' className="mr-2" />
+                                                Withdrawal Pending
                                             </h6>
-                                            <p>£ {clientWithdrawal}</p>
+                                            <p className='text-red-500'>£ {clientWithdrawal}</p>
                                         </li>
                                     </ul>
                                 </div>
