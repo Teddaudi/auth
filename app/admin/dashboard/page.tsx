@@ -67,6 +67,7 @@ const Page = () => {
         try {
             const users = await axios.get('/api/users/all')
             const finalUsers = users.data.data;
+            console.log("usersLength:", finalUsers.length)
             const verifiedUsers = finalUsers.filter((user: any) => user.idVerification === true).length
             const totalInvestment = finalUsers.reduce((sum: number, user: any) => {
                 const investment = parseFloat(user.investment);
@@ -325,7 +326,7 @@ const Page = () => {
                     </div>
                     <Toaster />
                     <div className="grid grid-cols-1 gap-2 p-4 lg:grid-cols-2">
-                        <div className="overflow-x-auto m-2 shadow-md max-h-80 overflow-y-auto">
+                        <div className="overflow-x-auto m-2 shadow-md ">
                             <table className="w-full">
                                 <thead className="bg-gray-100">
                                     <tr>
