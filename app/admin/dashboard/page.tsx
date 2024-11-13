@@ -67,7 +67,6 @@ const Page = () => {
         try {
             const users = await axios.get('/api/users/all')
             const finalUsers = users.data.data;
-            console.log("usersLength:", finalUsers.length)
             const verifiedUsers = finalUsers.filter((user: any) => user.idVerification === true).length
             const totalInvestment = finalUsers.reduce((sum: number, user: any) => {
                 const investment = parseFloat(user.investment);
