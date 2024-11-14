@@ -18,10 +18,14 @@ import avatarImg from "../../images/avatar.png"
 import VerificationMessage from "../../lib/verificationPop"
 import { GrTransaction } from "react-icons/gr";
 
+
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
 const Page = () => {
     const [edit, setEdit] = useState(false)
-    const [id1, setId1] = useState("")
-    const [id2, setId2] = useState("")
+    const [id1, setId1] = useState<File | null>(null);
+    const [id2, setId2] = useState<File | null>(null);
+
     const [verificationStatus, setVerificationStatus] = useState(false)
     const [verify, setVerify] = useState("Not verified")
     const [data, setData] = useState("")
@@ -349,21 +353,30 @@ const Page = () => {
     const handleSubmit = async (e: any) => {
         try {
             e.preventDefault();
-
             // Check if a file is selected
-            if (!id1) {
+            if (!id1 && !id2) {
                 toast.error("No file selected. Please upload a file for verification.");
                 return; // Stop execution if no file is selected
             }
 
-            // Check if the file size is greater than 2 MB
-            // if (id1.size > 2 * 1024 * 1024) { // 2 * 1024 * 1024 bytes = 2 MB
-            //     toast.error("File size exceeds 2 MB. Please upload a smaller file.");
-            //     return; // Stop execution if the file is too large
-            // }
+            console.log("id1:", id1?.name, "id2:", id2?.name);
 
+            if (id1 && id1?.size > MAX_FILE_SIZE) {
+                return toast.error("Front image exceeded 2MB!")
+            }
+            if(id2 && id2?.size > MAX_FILE_SIZE){
+                return toast.error("Back image exceeded 2MB!")
+            }
             const data = new FormData();
-            data.set('file', id1);
+
+            if (id1) {
+                data.set('file[0]', id1); 
+            }
+
+            if (id2) {
+                data.set('file[1]', id2); 
+            }
+
 
             const res = await fetch('/api/users/verification', {
                 method: 'POST',
@@ -373,7 +386,6 @@ const Page = () => {
             if (!res.ok) throw new Error(await res.text());
 
             const userData = await axios.get("/api/users/me");
-            console.log("userData:", userData.data.data.investment);
 
             toast.success("Verification Successful!");
             setVerificationMessages(true)
@@ -445,11 +457,12 @@ const Page = () => {
             const response = await axios.get('/api/users/withdrawal');
             if (response.data && response.data.withdrawal) {
                 setClientWithdrawal(response.data.withdrawal.withdrawal);
+                return
             } else {
                 console.error('Data structure is unexpected');
             }
             setLoading(false); // Stop loading once data is fetched
-        } catch (error:any) {
+        } catch (error: any) {
             console.error('Error fetching data:', error.message);
             setLoading(false); // Stop loading in case of error
         }
@@ -457,7 +470,7 @@ const Page = () => {
     useEffect(() => {
         withdrawalFun()
     }, [loading])
-  
+
     useEffect(() => {
         fetchData()
         userStatus()
@@ -514,7 +527,7 @@ const Page = () => {
                         </div>
                         {loading ? (
                             <div className="bg-white shadow rounded-lg mt-4">
-                                <p className="flex justify-between items-center p-4 border-b">Loading...</p>
+                                <p className="flex justify-between items-center p-4 border-b">No withdrawal made!</p>
                             </div>
                         ) : (
                             clientWithdrawal !== null && clientWithdrawal !== 0 && (
