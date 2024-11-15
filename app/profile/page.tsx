@@ -556,7 +556,7 @@ const Page = () => {
                                 </div>
                             )
                         )} */}
-                        {clientWithdrawal !== null || clientWithdrawal !== 0 && (
+                        {clientWithdrawal && (
                             <div className="bg-white shadow rounded-lg mt-4">
                                 <ul className="list-none">
                                     <li className="flex justify-between items-center p-4 border-b">
