@@ -460,6 +460,7 @@ const Page = () => {
     //         setLoading(false); // Stop loading in case of error
     //     }
     // };
+    // console.log("client:", clientWithdrawal)
     useEffect(() => {
         const withdrawalFun = async () => {
             try {
@@ -555,15 +556,7 @@ const Page = () => {
                                 </div>
                             )
                         )} */}
-                        {loading ? (
-                            <div className="bg-white shadow rounded-lg mt-4">
-                                <p className="flex justify-between items-center p-4 border-b">Loading...</p>
-                            </div>
-                        ) : clientWithdrawal === null || clientWithdrawal === 0 ? (
-                            <div className="bg-white shadow rounded-lg mt-4">
-                                <p className="flex justify-between items-center p-4 border-b">No withdrawal made!</p>
-                            </div>
-                        ) : (
+                        {clientWithdrawal === null || clientWithdrawal === 0 && (
                             <div className="bg-white shadow rounded-lg mt-4">
                                 <ul className="list-none">
                                     <li className="flex justify-between items-center p-4 border-b">

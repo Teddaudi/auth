@@ -172,7 +172,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       }, { status: 400 });
     }
   } catch (error: any) {
-    console.error("Error verifying ID:", error.message);
+    console.error("Error verifying ID:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
