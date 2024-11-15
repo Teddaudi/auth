@@ -19,7 +19,7 @@ import VerificationMessage from "../../lib/verificationPop"
 import { GrTransaction } from "react-icons/gr";
 
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024;
+const MAX_FILE_SIZE = 25 * 1024 * 1024;
 
 const Page = () => {
     const [edit, setEdit] = useState(false)
