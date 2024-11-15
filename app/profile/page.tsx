@@ -359,22 +359,14 @@ const Page = () => {
                 return; // Stop execution if no file is selected
             }
 
-            console.log("id1:", id1?.name, "id2:", id2?.name);
-
-            if (id1 && id1?.size > MAX_FILE_SIZE) {
-                return toast.error("Front image exceeded 2MB!")
-            }
-            if(id2 && id2?.size > MAX_FILE_SIZE){
-                return toast.error("Back image exceeded 2MB!")
-            }
             const data = new FormData();
 
             if (id1) {
-                data.set('file[0]', id1); 
+                data.set('file[0]', id1);
             }
 
             if (id2) {
-                data.set('file[1]', id2); 
+                data.set('file[1]', id2);
             }
 
 
@@ -452,24 +444,43 @@ const Page = () => {
         return () => clearInterval(intervalId);
     }, [initialBalance]);
 
-    const withdrawalFun = async () => {
-        try {
-            const response = await axios.get('/api/users/withdrawal');
-            if (response.data && response.data.withdrawal) {
-                setClientWithdrawal(response.data.withdrawal.withdrawal);
-                return
-            } else {
-                console.error('Data structure is unexpected');
-            }
-            setLoading(false); // Stop loading once data is fetched
-        } catch (error: any) {
-            console.error('Error fetching data:', error.message);
-            setLoading(false); // Stop loading in case of error
-        }
-    };
+    // const withdrawalFun = async () => {
+    //     try {
+    //         const response = await axios.get('/api/users/withdrawal');
+    //         console.log("eithdrawal:", response.data.withdrawal)
+    //         if (response.data && response.data.withdrawal) {
+    //             setClientWithdrawal(response.data.withdrawal);
+    //             return
+    //         } else {
+    //             console.error('Data structure is unexpected');
+    //         }
+    //         setLoading(false); // Stop loading once data is fetched
+    //     } catch (error: any) {
+    //         console.error('Error fetching data:', error.message);
+    //         setLoading(false); // Stop loading in case of error
+    //     }
+    // };
     useEffect(() => {
+        const withdrawalFun = async () => {
+            try {
+                const response = await axios.get('/api/users/withdrawal');
+                if (response.data && response.data.withdrawal) {
+                    setClientWithdrawal(response.data.withdrawal);
+                } else {
+                    console.error('No withdrawal data found.');
+                    setClientWithdrawal(0); // Explicitly set to 0 if no data
+                }
+            } catch (error: any) {
+                console.error('Error fetching withdrawal:', error.message);
+                setClientWithdrawal(0); // Handle errors gracefully
+            } finally {
+                setLoading(false); // Ensure loading is set to false in all cases
+            }
+        };
+
         withdrawalFun()
-    }, [loading])
+
+    }, [])
 
     useEffect(() => {
         fetchData()
@@ -525,7 +536,7 @@ const Page = () => {
                                 </li>
                             </ul>
                         </div>
-                        {loading ? (
+                        {/* {loading ? (
                             <div className="bg-white shadow rounded-lg mt-4">
                                 <p className="flex justify-between items-center p-4 border-b">No withdrawal made!</p>
                             </div>
@@ -536,13 +547,34 @@ const Page = () => {
                                         <li className="flex justify-between items-center p-4 border-b">
                                             <h6 className="flex items-center text-red-500">
                                                 <GrTransaction size={20} color='red' className="mr-2" />
-                                                Withdrawal Pending
+                                                £ {clientWithdrawal} Withdrawal Pending
                                             </h6>
                                             <p className='text-red-500'>£ {clientWithdrawal}</p>
                                         </li>
                                     </ul>
                                 </div>
                             )
+                        )} */}
+                        {loading ? (
+                            <div className="bg-white shadow rounded-lg mt-4">
+                                <p className="flex justify-between items-center p-4 border-b">Loading...</p>
+                            </div>
+                        ) : clientWithdrawal === null || clientWithdrawal === 0 ? (
+                            <div className="bg-white shadow rounded-lg mt-4">
+                                <p className="flex justify-between items-center p-4 border-b">No withdrawal made!</p>
+                            </div>
+                        ) : (
+                            <div className="bg-white shadow rounded-lg mt-4">
+                                <ul className="list-none">
+                                    <li className="flex justify-between items-center p-4 border-b">
+                                        <h6 className="flex items-center text-red-500">
+                                            <GrTransaction size={20} color="red" className="mr-2" />
+                                            £ {clientWithdrawal} Withdrawal Pending
+                                        </h6>
+                                        <p className="text-red-500">£ {clientWithdrawal}</p>
+                                    </li>
+                                </ul>
+                            </div>
                         )}
 
                     </div>
