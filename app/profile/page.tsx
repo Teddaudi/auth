@@ -554,7 +554,7 @@ const Page = () => {
                                 </div>
                             )
                         )} */}
-                        {clientWithdrawal &&  (
+                        {/* {clientWithdrawal &&  (
                             <div className="bg-white shadow rounded-lg mt-4">
                                 <ul className="list-none">
                                     <li className="flex justify-between items-center p-4 border-b">
@@ -566,7 +566,7 @@ const Page = () => {
                                     </li>
                                 </ul>
                             </div>
-                        )}
+                        )} */}
 
                     </div>
                     {/* Main Content */}
