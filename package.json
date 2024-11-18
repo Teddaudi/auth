@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@binance/connector": "^3.5.0",
+    "@complycube/api": "^1.1.11",
     "@headlessui/react": "^2.1.10",
     "@heroicons/react": "^2.1.5",
     "@microblink/blinkid-in-browser-sdk": "^6.12.0",

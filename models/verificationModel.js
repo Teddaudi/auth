@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const verificationSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
+        required: true, // Adding validation to ensure email is provided
     },
     idVerification: {
         type: Boolean,
         default: false,
     },
-    image: {
-        type: Buffer, 
-        default:null
-    }
+    images: {
+        type: [Buffer], // Change from a single Buffer to an array of Buffers
+        default: [], // Initialize as an empty array
+    },
 });
 
 const Verification = mongoose.models.Verification || mongoose.model("Verification", verificationSchema);

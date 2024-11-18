@@ -375,16 +375,13 @@ const Page = () => {
                 body: data,
             });
 
-            if (!res.ok) throw new Error(await res.text());
+            if (!res.ok) throw new Error(await res.text());;
 
-            const userData = await axios.get("/api/users/me");
-
-            toast.success("Verification Successful!");
-            setVerificationMessages(true)
             setVerificationStatus(false);
+            toast.success("Files uploaded successfully!");
         } catch (error: any) {
             console.log(error)
-            toast.error("Unable to verify credentials!");
+            toast.error("Unable to upload credentials!");
         }
     };
 
