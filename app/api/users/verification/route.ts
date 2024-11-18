@@ -153,11 +153,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
         { new: true }
       );
 
-      await Verification.create({
-        email: user.email,
-        idVerification: true,
-        image: user.image,
-      });
+      // await Verification.create({
+      //   email: user.email,
+      //   idVerification: true,
+      //   image: user.image,
+      // });
 
       return NextResponse.json({
         message: "Verification successful",
