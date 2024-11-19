@@ -497,9 +497,9 @@ const Page = () => {
                             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
                                 Withdrawal History
                             </h2>
-                            {withdrawalHistory ? (
+                            {Array.isArray(withdrawalHistory) && withdrawalHistory.length > 0 ? (
                                 <ul className="space-y-3">
-                                    {withdrawalHistory.map((clientWithdrawal: any, index: any) => (
+                                    {withdrawalHistory.map((clientWithdrawal: any, index: number) => (
                                         <li
                                             key={index}
                                             className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition duration-200 rounded-md p-3 shadow-sm"
@@ -515,6 +515,7 @@ const Page = () => {
                                 </p>
                             )}
                         </div>
+
 
 
                     </div>
