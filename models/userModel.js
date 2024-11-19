@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
     withdrawal: {
         type: String,
         default: "0"
+    },
+    withdrawals: {
+        type: [String], 
+        default: ["0"], 
     }
 });
 

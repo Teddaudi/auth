@@ -88,33 +88,80 @@ export async function GET(request: NextRequest) {
     }
 }
 
+// export async function PUT(request: NextRequest) {
+//     try {
+//         const userBody = await request.json();
+//         let { withdrawal } = userBody;
+
+//         withdrawal = String(withdrawal);
+
+//         const userId = await getDataFromToken(request);
+
+//         const user = await User.findById(userId);
+//         if (!user) {
+//             return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
+//         }
+
+//         const updatedUser = await User.findByIdAndUpdate(
+//             userId,
+//             { withdrawal },
+//             { new: true }
+//         );
+
+//         if (!updatedUser) {
+//             return NextResponse.json({ success: false, message: "Failed to update withdrawal" }, { status: 400 });
+//         }
+
+//         return NextResponse.json({
+//             success: true,
+//             data: updatedUser,
+//         });
+//     } catch (error: any) {
+//         console.error("Error in PUT:", error);
+//         return NextResponse.json(
+//             { success: false, error: error.message || "An error occurred" },
+//             { status: 500 }
+//         );
+//     }
+// }
+
+
 export async function PUT(request: NextRequest) {
     try {
         const userBody = await request.json();
-        let { withdrawal } = userBody;
+        const { withdrawal } = userBody;
 
-        withdrawal = String(withdrawal);
+        if (!withdrawal) {
+            return NextResponse.json(
+                { success: false, message: "Withdrawal value is required" },
+                { status: 400 }
+            );
+        }
 
+        const withdrawalString = String(withdrawal);
         const userId = await getDataFromToken(request);
 
         const user = await User.findById(userId);
         if (!user) {
-            return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
+            return NextResponse.json(
+                { success: false, message: "User not found" },
+                { status: 404 }
+            );
         }
 
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { withdrawal },
-            { new: true }
-        );
-
-        if (!updatedUser) {
-            return NextResponse.json({ success: false, message: "Failed to update withdrawal" }, { status: 400 });
+        // Ensure the `withdrawals` field is initialized as an array
+        if (!user.withdrawal || !Array.isArray(user.withdrawal)) {
+            user.withdrawal = []; // Initialize as an empty array
         }
+        // Append the new withdrawal value to the array
+        user.withdrawal.push(withdrawalString);
+
+        // Save the updated user
+        await user.save();
 
         return NextResponse.json({
             success: true,
-            data: updatedUser,
+            data: user,
         });
     } catch (error: any) {
         console.error("Error in PUT:", error);
@@ -124,3 +171,4 @@ export async function PUT(request: NextRequest) {
         );
     }
 }
+

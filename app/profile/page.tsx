@@ -48,7 +48,7 @@ const Page = () => {
     const [verificationMessages, setVerificationMessages] = useState(false)
     const [clientWithdrawal, setClientWithdrawal] = useState<number | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
-
+    const [withdrawalHistory, setWithdrawalHistory] = useState([])
     async function Test() {
         await axios.post('/api/mail', { email: 'daudited@gmail.com', name: 'Daudi' })
         // console.log("clicked")
@@ -72,6 +72,7 @@ const Page = () => {
             setUsername(userData.username);
             setBalance(userData.investment);
             setIdVerification(userData.idVerification)
+            setWithdrawalHistory(userData.withdrawal)
         } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
@@ -102,7 +103,6 @@ const Page = () => {
             }
         }
     };
-
     const editUserData = async () => {
         try {
             await axios.put('/api/users/me', user);
@@ -439,7 +439,7 @@ const Page = () => {
 
     useEffect(() => {
         fetchData()
-        if(balance === 0){
+        if (balance === 0) {
             setVerificationMessages(true)
         }
         // userStatus()
@@ -493,19 +493,29 @@ const Page = () => {
                                 </li>
                             </ul>
                         </div>
-                        {/* {clientWithdrawal &&  (
-                            <div className="bg-white shadow rounded-lg mt-4">
-                                <ul className="list-none">
-                                    <li className="flex justify-between items-center p-4 border-b">
-                                        <h6 className="flex items-center text-red-500">
-                                            <GrTransaction size={20} color="red" className="mr-2" />
-                                            £ {clientWithdrawal} Withdrawal Pending
-                                        </h6>
-                                        <p className="text-red-500">£ {clientWithdrawal}</p>
-                                    </li>
+                        <div className="bg-white shadow-lg rounded-lg mt-6 p-4">
+                            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+                                Withdrawal History
+                            </h2>
+                            {withdrawalHistory.length > 0 ? (
+                                <ul className="space-y-3">
+                                    {withdrawalHistory.map((clientWithdrawal: any, index: any) => (
+                                        <li
+                                            key={index}
+                                            className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition duration-200 rounded-md p-3 shadow-sm"
+                                        >
+                                            <span className="text-gray-600 text-sm">Withdrawal #{index + 1}</span>
+                                            <p className="text-red-500 font-medium text-lg">£ {clientWithdrawal}</p>
+                                        </li>
+                                    ))}
                                 </ul>
-                            </div>
-                        )} */}
+                            ) : (
+                                <p className="text-gray-500 text-center py-4">
+                                    No withdrawal history available.
+                                </p>
+                            )}
+                        </div>
+
 
                     </div>
                     {/* Main Content */}
