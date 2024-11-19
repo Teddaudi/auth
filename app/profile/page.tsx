@@ -515,9 +515,6 @@ const Page = () => {
                                 </p>
                             )}
                         </div>
-
-
-
                     </div>
                     {/* Main Content */}
                     <div className="w-full md:w-2/3 px-4">
