@@ -497,7 +497,7 @@ const Page = () => {
                             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
                                 Withdrawal History
                             </h2>
-                            {withdrawalHistory.length > 0 ? (
+                            {withdrawalHistory ? (
                                 <ul className="space-y-3">
                                     {withdrawalHistory.map((clientWithdrawal: any, index: any) => (
                                         <li
