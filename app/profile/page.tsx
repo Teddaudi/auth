@@ -25,7 +25,7 @@ const Page = () => {
     const [edit, setEdit] = useState(false)
     const [id1, setId1] = useState<File | null>(null);
     const [id2, setId2] = useState<File | null>(null);
-
+    const [idVerification, setIdVerification] = useState(false)
     const [verificationStatus, setVerificationStatus] = useState(false)
     const [verify, setVerify] = useState("Not verified")
     const [data, setData] = useState("")
@@ -38,21 +38,14 @@ const Page = () => {
         address: "",
         investment: ""
     })
-    const [amount, setAmount] = useState("")
-    const [currency, setCurrency] = useState("£")
     const [balance, setBalance] = useState<any>(0)
     const [initialBalance, setInitialBalance] = useState(balance);
-    const router = useRouter()
-    const [documentImage, setDocumentImage] = useState(null);
-    const [faceImage, setFaceImage] = useState(null);
     // const [loading, setLoading] = useState(false);
-    const [response, setResponse] = useState(null);
-    const [editId, setEditId] = useState(false)
     const [wallet, setWallet] = useState("")
     const [profileImage, setProfileImage] = useState("")
     const [modal, setModal] = useState(false)
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
-    const [verificationMessages, setVerificationMessages] = useState(true)
+    const [verificationMessages, setVerificationMessages] = useState(false)
     const [clientWithdrawal, setClientWithdrawal] = useState<number | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
 
@@ -69,7 +62,6 @@ const Page = () => {
         try {
             const res = await axios.get('/api/users/me');
             const userData = res.data.data;
-
             setUser({
                 fullName: userData.fullName || '',
                 phone: userData.phone || '',
@@ -78,7 +70,8 @@ const Page = () => {
             });
             setEmail(userData.email);
             setUsername(userData.username);
-            setBalance(userData.investment || 0);
+            setBalance(userData.investment);
+            setIdVerification(userData.idVerification)
         } catch (error: any) {
             if (error.response) {
                 const statusCode = error.response.status;
@@ -298,15 +291,15 @@ const Page = () => {
                 setImage(response.data.image); // Set the Base64 image string
             } else {
                 console.error("Failed to fetch image:", response.data?.message || "Unknown error occurred.");
-                toast.error(response.data?.message || "Could not load profile image.");
+                // toast.error(response.data?.message || "Could not load profile image.");
             }
         } catch (error: any) {
             if (axios.isAxiosError(error)) {
                 console.error("API request failed:", error.response?.data?.message || error.message);
-                toast.error(error.response?.data?.message || "Network or server error. Please try again.");
+                // toast.error(error.response?.data?.message || "Network or server error. Please try again.");
             } else {
                 console.error("Unexpected error:", error);
-                toast.error("An unexpected error occurred.");
+                // toast.error("An unexpected error occurred.");
             }
         }
     };
@@ -314,42 +307,21 @@ const Page = () => {
     const handleClose = async () => {
         setVerificationStatus(false)
     }
-    const userStatus = async () => {
-        try {
-            const verification = await axios.get('/api/users/verification/status')
-            // console.log("verification:",verification)
-            if (verification.data.data) {
-                setVerify("Verified")
-            } else {
-                setVerify("Not verified")
-            }
-        } catch (error) {
-            return toast.error("You are not verified!")
-        }
-    }
-
-    // const handleSubmit = async (e: any) => {
+    // const userStatus = async () => {
     //     try {
-    //         e.preventDefault()
-
-    //         const data = new FormData()
-    //         data.set('file', id1)
-    //         const res = await fetch('/api/users/verification', {
-    //             method: 'POST',
-    //             body: data
-    //         });
-    //         // console.log("res:",res)
-    //         if (!res.ok) throw new Error(await res.text())
-
-    //         // await axios.post("/api/users/verification" ,{id1,id2} )
-    //         const userData = await axios.get("/api/users/me")
-    //         console.log("userData:", userData.data.data.investment)
-    //         toast.success("Verification Successful!")
-    //         setVerificationStatus(false)
-    //     } catch (error: any) {
-    //         return toast.error("Unable to verify credentials!")
+    //         const verification = await axios.get('/api/users/verification/status')
+    //         // console.log("verification:",verification)
+    //         if (verification.data.data) {
+    //             setVerify("Verified")
+    //         } else {
+    //             setVerify("Not verified")
+    //         }
+    //     } catch (error) {
+    //         return toast.error("You are not verified!")
     //     }
-    // };
+    // }
+
+
     const handleSubmit = async (e: any) => {
         try {
             e.preventDefault();
@@ -377,8 +349,8 @@ const Page = () => {
 
             if (!res.ok) throw new Error(await res.text());;
 
-            setVerificationStatus(false);
             toast.success("Files uploaded successfully!");
+            setVerificationStatus(false);
         } catch (error: any) {
             console.log(error)
             toast.error("Unable to upload credentials!");
@@ -442,23 +414,7 @@ const Page = () => {
         return () => clearInterval(intervalId);
     }, [initialBalance]);
 
-    // const withdrawalFun = async () => {
-    //     try {
-    //         const response = await axios.get('/api/users/withdrawal');
-    //         console.log("eithdrawal:", response.data.withdrawal)
-    //         if (response.data && response.data.withdrawal) {
-    //             setClientWithdrawal(response.data.withdrawal);
-    //             return
-    //         } else {
-    //             console.error('Data structure is unexpected');
-    //         }
-    //         setLoading(false); // Stop loading once data is fetched
-    //     } catch (error: any) {
-    //         console.error('Error fetching data:', error.message);
-    //         setLoading(false); // Stop loading in case of error
-    //     }
-    // };
-    // console.log("client:", clientWithdrawal)
+
     useEffect(() => {
         const withdrawalFun = async () => {
             try {
@@ -483,7 +439,10 @@ const Page = () => {
 
     useEffect(() => {
         fetchData()
-        userStatus()
+        if(balance === 0){
+            setVerificationMessages(true)
+        }
+        // userStatus()
         avatarFun()
         balFun()
     }, [data])
@@ -526,34 +485,14 @@ const Page = () => {
                                         <MdOutlineVerifiedUser size={20} color='gray' className="mr-2" />
                                         Verification Status
                                     </h6>
-                                    <div className={`text-white  ${verify === "Verified" ? "bg-green-500" : "bg-red-500"} px-1 text-xs cursor-pointer`} title="Upload your ID"
+                                    <div className={`text-white  ${idVerification ? "bg-green-500" : "bg-red-500"} px-1 text-xs cursor-pointer`} title="Upload your ID"
                                         onClick={statusFun}
-                                    >{!verificationStatus && verify}</div>
+                                    >{idVerification ? "Verified" : "Not Verified"}</div>
                                     {verificationStatus && <UploadId setId1={setId1} setId2={setId2} handleClose={handleClose} handleSubmit={handleSubmit} />}
-                                    {/* {verificationStatus || editId && <UploadId handleSubmit={handleSubmit} setEditId={setEditId} loading={loading} handleFileChange={handleFileChange} setFaceImage={setFaceImage} setDocumentImage={setDocumentImage} />} */}
                                     {verificationMessages && <VerificationMessage setVerificationMessages={setVerificationMessages} />}
                                 </li>
                             </ul>
                         </div>
-                        {/* {loading ? (
-                            <div className="bg-white shadow rounded-lg mt-4">
-                                <p className="flex justify-between items-center p-4 border-b">No withdrawal made!</p>
-                            </div>
-                        ) : (
-                            clientWithdrawal !== null && clientWithdrawal !== 0 && (
-                                <div className="bg-white shadow rounded-lg mt-4">
-                                    <ul className="list-none">
-                                        <li className="flex justify-between items-center p-4 border-b">
-                                            <h6 className="flex items-center text-red-500">
-                                                <GrTransaction size={20} color='red' className="mr-2" />
-                                                £ {clientWithdrawal} Withdrawal Pending
-                                            </h6>
-                                            <p className='text-red-500'>£ {clientWithdrawal}</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            )
-                        )} */}
                         {/* {clientWithdrawal &&  (
                             <div className="bg-white shadow rounded-lg mt-4">
                                 <ul className="list-none">
