@@ -415,27 +415,24 @@ const Page = () => {
     }, [initialBalance]);
 
 
-    useEffect(() => {
-        const withdrawalFun = async () => {
-            try {
-                const response = await axios.get('/api/users/withdrawal');
-                if (response.data.success) {
-                    setClientWithdrawal(response.data.withdrawal);
-                }
-            } catch (error: any) {
-                console.error('Error fetching withdrawal:', error.message);
+    const withdrawalFun = async () => {
+        try {
+            const response = await axios.get('/api/users/withdrawal');
+            if (response.data.success) {
+                setClientWithdrawal(response.data.withdrawal);
             }
-        };
+        } catch (error: any) {
+            console.error('Error fetching withdrawal:', error.message);
+        }
+    };
 
-        withdrawalFun()
-    }, [])
-    useEffect(() => {
-    }, [clientWithdrawal]);
+
     useEffect(() => {
         fetchData()
         if (balance === 0) {
             setVerificationMessages(true)
         }
+        withdrawalFun()
         setVerificationMessages(false)
 
         // userStatus()
