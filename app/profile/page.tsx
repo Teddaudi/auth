@@ -46,7 +46,7 @@ const Page = () => {
     const [modal, setModal] = useState(false)
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
     const [verificationMessages, setVerificationMessages] = useState(false)
-    const [clientWithdrawal, setClientWithdrawal] = useState<number | null>(null)
+    const [clientWithdrawal, setClientWithdrawal] = useState([])
     const [loading, setLoading] = useState<boolean>(true)
     const [withdrawalHistory, setWithdrawalHistory] = useState([])
     async function Test() {
@@ -419,29 +419,25 @@ const Page = () => {
         const withdrawalFun = async () => {
             try {
                 const response = await axios.get('/api/users/withdrawal');
-                if (response.data && response.data.withdrawal) {
+                if (response.data.success) {
                     setClientWithdrawal(response.data.withdrawal);
-                } else {
-                    console.error('No withdrawal data found.');
-                    setClientWithdrawal(0); // Explicitly set to 0 if no data
                 }
             } catch (error: any) {
                 console.error('Error fetching withdrawal:', error.message);
-                setClientWithdrawal(0); // Handle errors gracefully
-            } finally {
-                setLoading(false); // Ensure loading is set to false in all cases
             }
         };
 
         withdrawalFun()
-
     }, [])
-
+    useEffect(() => {
+    }, [clientWithdrawal]);
     useEffect(() => {
         fetchData()
         if (balance === 0) {
             setVerificationMessages(true)
         }
+        setVerificationMessages(false)
+
         // userStatus()
         avatarFun()
         balFun()
@@ -497,9 +493,9 @@ const Page = () => {
                             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
                                 Withdrawal History
                             </h2>
-                            {Array.isArray(withdrawalHistory) && withdrawalHistory.length > 0 ? (
+                            {clientWithdrawal.length > 0 ? (
                                 <ul className="space-y-3">
-                                    {withdrawalHistory.map((clientWithdrawal: any, index: number) => (
+                                    {clientWithdrawal.map((clientWithdrawal: any, index: number) => (
                                         <li
                                             key={index}
                                             className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition duration-200 rounded-md p-3 shadow-sm"
