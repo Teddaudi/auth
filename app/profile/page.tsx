@@ -194,7 +194,7 @@ const Page = () => {
     };
     async function handleWallet() {
         try {
-            if (verify === "Not verified") {
+            if (!idVerification) {
                 toast.error("Please verify your account!")
                 return;
             }
@@ -205,7 +205,7 @@ const Page = () => {
     }
     async function handleWalletEth() {
         try {
-            if (verify === "Not verified") {
+            if (!idVerification) {
                 toast.error("Please verify your account!")
                 return;
             }
@@ -216,7 +216,7 @@ const Page = () => {
     }
     async function handleWalletLtc() {
         try {
-            if (verify === "Not verified") {
+            if (!idVerification) {
                 toast.error("Please verify your account!")
                 return;
             }
@@ -227,7 +227,7 @@ const Page = () => {
     }
     async function handleWalletUSDT() {
         try {
-            if (verify === "Not verified") {
+            if (!idVerification) {
                 toast.error("Please verify your account!")
                 return;
             }
@@ -614,7 +614,7 @@ const Page = () => {
                                         {/* <a href="https://nowpayments.io/donation?api_key=WXY7XDZ-JRV4MR2-JB4V22A-H1RK924" target="_blank" rel="noreferrer noopener">
                                             <img src="https://nowpayments.io/images/embeds/donation-button-white.svg" alt="Cryptocurrency & Bitcoin donation button by NOWPayments" />
                                         </a> */}
-                                        <div className='flex  cypto'>
+                                        <div className='flex cypto'>
                                             <div>
                                                 <button className='bg-yellow-200 ml-2 px-4 py-2 rounded-lg text-white font-semibold cursor-pointer hover:bg-yellow-500' onClick={handleWallet}>BTC</button>
                                             </div>
