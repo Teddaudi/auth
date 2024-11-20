@@ -195,21 +195,47 @@ const Page = () => {
     async function handleWallet() {
         try {
             if (!idVerification) {
-                toast.error("Please verify your account!")
+                toast.error("Please verify your account!");
                 return;
             }
-            setWallet("bc1qsh0dggjz2vyppgqy2akl3w4y6duzmrayu6ptqc")
+    
+            // Fetch wallet data for BTC
+            const btc = await axios.get(`/api/wallets?name=BTC`);
+            console.log("Fetched wallets:", btc.data.wallets);
+    
+            // Ensure wallets data exists and is not empty
+            if (btc.data.wallets && btc.data.wallets.length > 0) {
+                // Extract the wallet value for BTC
+                const walletValue = btc.data.wallets[0]?.wallet;
+    
+                // Set the wallet value in state
+                setWallet(walletValue);
+            } else {
+                toast.error("No wallet found for BTC.");
+            }
         } catch (error: any) {
-            return console.log(error.message)
+            console.error("Error fetching wallet:", error.message);
+            toast.error("Failed to fetch wallet data. Please try again.");
         }
     }
+    
     async function handleWalletEth() {
         try {
             if (!idVerification) {
                 toast.error("Please verify your account!")
                 return;
             }
-            setWallet("0x84E374B803491D9fC6a71889E25a16f37B6747Ed")
+            const eth = await axios.get(`/api/wallets?name=ETH`);
+            console.log("Fetched wallets:", eth.data.wallets);
+            if (eth.data.wallets && eth.data.wallets.length > 0) {
+                // Extract the wallet value for eth
+                const walletValue = eth.data.wallets[0]?.wallet;
+    
+                // Set the wallet value in state
+                setWallet(walletValue);
+            } else {
+                toast.error("No wallet found for eth.");
+            }
         } catch (error: any) {
             return console.log(error.message)
         }
@@ -220,7 +246,17 @@ const Page = () => {
                 toast.error("Please verify your account!")
                 return;
             }
-            setWallet("ltc1qa2c6wc39utg246rmt38x62src8dct3tvykg3me")
+            const ltc = await axios.get(`/api/wallets?name=LTC`);
+            console.log("Fetched wallets:", ltc.data.wallets);
+            if (ltc.data.wallets && ltc.data.wallets.length > 0) {
+                // Extract the wallet value for ltc
+                const walletValue = ltc.data.wallets[0]?.wallet;
+    
+                // Set the wallet value in state
+                setWallet(walletValue);
+            } else {
+                toast.error("No wallet found for ltc.");
+            }
         } catch (error: any) {
             return console.log(error.message)
         }
@@ -231,7 +267,17 @@ const Page = () => {
                 toast.error("Please verify your account!")
                 return;
             }
-            setWallet("TNeyjudVdkxjukNYABqATzne58aTmXnu9U")
+            const usdttrc20 = await axios.get(`/api/wallets?name=USDTTRC20`);
+            console.log("Fetched wallets:", usdttrc20.data.wallets);
+            if (usdttrc20.data.wallets && usdttrc20.data.wallets.length > 0) {
+                // Extract the wallet value for usdttrc20
+                const walletValue = usdttrc20.data.wallets[0]?.wallet;
+    
+                // Set the wallet value in state
+                setWallet(walletValue);
+            } else {
+                toast.error("No wallet found for usdttrc20.");
+            }
         } catch (error: any) {
             return console.log(error.message)
         }
@@ -629,13 +675,6 @@ const Page = () => {
                                             </div>
                                         </div>
                                         <div className="mt-6">
-                                            {/* <button
-                                                type="submit"
-                                                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300"
-                                                onClick={startPay}
-                                            >
-                                                Pay
-                                            </button> */}
                                             <p className='text-red-500 text-sm font-normal wallet '>{wallet} </p>{wallet && <IoCopyOutline className='cursor-pointer' onClick={handleCopy} />}
                                         </div>
                                     </div>

@@ -7,6 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Header from '../../components/header';
 import SendMessages from "../../components/message";
+import CreateWallet from "../../components/wallet"
 import { MdDelete } from "react-icons/md";
 import { MdSystemUpdateAlt } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
@@ -24,7 +25,7 @@ interface Transaction {
 
 const Page = () => {
     const [frontIdBase64, setFrontIdBase64] = useState("");
-    const [userId,setUserId]= useState(0)
+    const [userId, setUserId] = useState(0)
     const [backIdBase64, setBackIdBase64] = useState("");
     const [verify, setVerify] = useState<number | null>(null);
     const [investment, setInvestment] = useState<number | null>(null);
@@ -39,10 +40,13 @@ const Page = () => {
     const [balance, setBalance] = useState<any>(20)
     // const [initialBalance, setInitialBalance] = useState(balance);
     const [elapsedTime, setElapsedTime] = useState<number>(0); // Track elapsed time
-
+    const [wallet, setWallet] = useState(false)
     function handleMessage() {
         setMessage((prev: any) => !prev)
 
+    }
+    function handleWallet() {
+        setWallet((prev: any) => !prev)
     }
     const getTransactions = async () => {
         try {
@@ -312,19 +316,19 @@ const Page = () => {
     };
     function handleApproval(id: number) {
         axios
-          .put('/api/users/verification/approval', { userId: id })
-          .then((response) => {
-            if(response.data.success){
-                return toast.success('Approval successful');
-            }
-            // Handle success logic here (e.g., updating UI)
-          })
-          .catch((error) => {
-            toast.error('Error during approval');
-            // Handle error logic here
-          });
-      }
-      
+            .put('/api/users/verification/approval', { userId: id })
+            .then((response) => {
+                if (response.data.success) {
+                    return toast.success('Approval successful');
+                }
+                // Handle success logic here (e.g., updating UI)
+            })
+            .catch((error) => {
+                toast.error('Error during approval');
+                // Handle error logic here
+            });
+    }
+
     return (
         <>
             <Header />
@@ -409,10 +413,24 @@ const Page = () => {
 
                             </table>
                         </div>
-                        <div >
-                            <button className='bg-blue-300 hover:bg-blue-600 text-white py-2 px-2 rounded-lg cursor-pointer mb-2' onClick={handleMessage}>Create Message</button>
+                        <div className="flex flex-col space-y-4 items-center">
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
+                                onClick={handleMessage}
+                            >
+                                Create Message
+                            </button>
                             {message && <SendMessages />}
+
+                            <button
+                                className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
+                                onClick={handleWallet}
+                            >
+                                Create Wallet
+                            </button>
+                            {wallet && <CreateWallet />}
                         </div>
+
                         <div className="flex flex-col items-center space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
                             <div className="flex flex-col items-center">
                                 <h2 className="text-lg font-semibold text-gray-700 mb-2">Front ID</h2>
