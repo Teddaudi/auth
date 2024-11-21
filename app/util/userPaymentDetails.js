@@ -7,7 +7,7 @@ const PaymentDetails = ({ setClose, setOpen, setMoney }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [widthdraw, setWithdraw] = useState(0);
     const [loading, setLoading] = useState(false);  // Loading state
-
+    const [wallet, setWallet] = useState(false)
     const handleCryptoChange = (crypto) => {
         setSelectedCrypto(crypto);
         setShowDropdown(false);
@@ -22,13 +22,15 @@ const PaymentDetails = ({ setClose, setOpen, setMoney }) => {
         try {
             const data = await axios.get('/api/users/me');
             const current = data.data.data.investment;
-
-            if (Number(widthdraw) > current) {
-                toast.error("Insufficient funds!");
-                setLoading(false);  // Stop loading if insufficient funds
-                return;
+            if (!wallet || !widthdraw || !selectedCrypto){
+                return toast.error("Provide all the neccessary details!")
             }
-           await axios.put('/api/users/withdrawal', {withdrawal:widthdraw})
+                if (Number(widthdraw) > current) {
+                    toast.error("Insufficient funds!");
+                    setLoading(false);  // Stop loading if insufficient funds
+                    return;
+                }
+            await axios.put('/api/users/withdrawal', { withdrawal: widthdraw })
             const totalWithdrawal = current - Number(widthdraw);
             const res = await axios.put('/api/balance', {
                 amount: totalWithdrawal
@@ -55,6 +57,7 @@ const PaymentDetails = ({ setClose, setOpen, setMoney }) => {
 
                 <label className="block text-gray-700 font-medium">Wallet Address</label>
                 <input
+                    onChange={() => setWallet(true)}
                     type="text"
                     placeholder="Your wallet address"
                     className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
