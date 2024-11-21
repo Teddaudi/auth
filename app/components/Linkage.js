@@ -3,26 +3,24 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
-const Popup = ({ setOpen,money,setOpenLinkage }) => {
+const Linkage = ({ setOpenLinkage }) => {
     const router = useRouter();
 
     const handleClick = () => {
-        setOpen(false);
+        setOpenLinkage(false);
     };
 
     async function handleCashout() {
         // const data = await axios.get('/api/users/me')
         //     const current = data.data.data.investment
-        setOpen(false)
-        setOpenLinkage(true)
+        setOpenLinkage(false)
     }
 
-    // Close the popup on Escape key press
+    // Close the Linkage on Escape key press
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
-                setOpen(false);
-                setOpenLinkage(true)
+                setOpenLinkage(false);
             }
         };
 
@@ -31,31 +29,24 @@ const Popup = ({ setOpen,money,setOpenLinkage }) => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [setOpen,setOpenLinkage]);
+    }, [setOpenLinkage]);
 
     return (
         <div>
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white rounded-lg shadow-lg w-96 p-6 space-y-4">
                     <p>
-                        Please proceed with the deposit of the 10% one-time refundable linkage fee. This will link your receiving details to the system,
-                        allowing you to withdraw your funds. Once your details are linked, you can proceed to withdraw.
+                        First proceed with the payment of the one time refundable linkage fee then proceed to withdraw.
                     </p>
-                    <p>
+                    {/* <p>
                         Let me know once the step is complete!
-                    </p>
+                    </p> */}
                     <div className="flex justify-between mt-4">
                         <button
-                            onClick={handleClick}
+                            onClick={() => setOpenLinkage(false)}
                             className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
                         >
                             Close
-                        </button>
-                        <button
-                            onClick={handleCashout}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
-                        >
-                            Proceed to Cashout
                         </button>
                     </div>
                 </div>
@@ -64,4 +55,4 @@ const Popup = ({ setOpen,money,setOpenLinkage }) => {
     );
 };
 
-export default Popup;
+export default Linkage;

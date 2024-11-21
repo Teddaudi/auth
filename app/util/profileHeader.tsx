@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Popup from '../../lib/popup';
 import PaymentDetails from '../util/userPaymentDetails';
+import Linkage from '../components/Linkage'
 
 interface HeaderUserProps {
     username: string;
@@ -22,6 +23,7 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     const [open, setOpen] = useState(false);
     const [money, setMoney] = useState(0);
     const [loading, setLoading] = useState(false); // Loading state for logout
+    const [openLinkage,setOpenLinkage]=useState(false)
     const router = useRouter();
 
     const logOut = async () => {
@@ -110,7 +112,8 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
                 </ul>
             </div>
             {close && <PaymentDetails setClose={setClose} setOpen={setOpen} setMoney={setMoney} />}
-            {open && <Popup setOpen={setOpen} money={money} />}
+            {open && <Popup setOpen={setOpen} money={money} setOpenLinkage={setOpenLinkage} />}
+            {openLinkage && <Linkage setOpenLinkage={setOpenLinkage} />}
         </header>
     );
 };
