@@ -66,7 +66,7 @@ const HeaderUser: React.FC<HeaderUserProps> = ({ username, image, avatarImg, bal
     };
 
     return (
-        <header className="h-14 bg-gray-100 top-0 w-full fixed shadow mb-[36px]" style={{ zIndex: 10 }}>
+        <header className="h-14 bg-gray-100 top-0 w-full fixed shadow mb-[36px]" style={{ zIndex: 5 }}>
             <div className="flex justify-between items-center px-10 h-14">
                 <div className="flex justify-between items-center gap-x-14">
                     <div className="w-40">

@@ -29,10 +29,12 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         '/',
-        '/profile',
         '/signin',
         '/signup',
         '/admin/dashboard',
-        '/cashout'
+        '/home',
+        '/list/profile',
+        '/list/verfication',
+        '/list/transaction'
     ],
 }

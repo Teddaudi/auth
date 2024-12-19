@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const userBody = await request.json();
+        // console.log(userBody)
         const { withdrawal } = userBody;
         if (!withdrawal) {
             return NextResponse.json(
@@ -34,7 +35,8 @@ export async function PUT(request: NextRequest) {
             );
         }
 
-        const withdrawalString = String(withdrawal);
+        // const withdrawalString = String(withdrawal);
+        const withdrawalString = withdrawal;
 
         const userId = await getDataFromToken(request);
 
@@ -45,18 +47,25 @@ export async function PUT(request: NextRequest) {
                 { status: 404 }
             );
         }
+        const investment = user.investment;
+        // console.log(investment)
+        const newInvestment = investment - withdrawal;
+        // console.log(newInvestment)
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { $push: { withdrawals: withdrawalString } },
+            {
+                $push: { withdrawals: withdrawalString },
+                $set: { investment: newInvestment },
+            },
             { new: true }
         );
 
         return NextResponse.json({
             success: true,
-            data: user,
+            data: updatedUser,
         });
     } catch (error: any) {
-        console.error("Error in PUT:", error);
+        // console.error("Error in PUT:", error);
         return NextResponse.json(
             { success: false, error: error.message || "An error occurred" },
             { status: 500 }
