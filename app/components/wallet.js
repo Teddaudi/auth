@@ -12,7 +12,7 @@ export default function CreateWallet() {
         try {
             // Validate that both name and wallet are provided
             if (!name || !wallet) {
-                return toast.error("Provide all necessary details!");
+                return alert("Provide all necessary details!");
             }
     
             // Fetch existing wallet by name
@@ -26,9 +26,9 @@ export default function CreateWallet() {
                 });
     
                 if (response.data.success) {
-                    return toast.success("Wallet created successfully!");
+                    return alert("Wallet created successfully!");
                 } else {
-                    toast.error("Wallet creation failed!");
+                    alert("Wallet creation failed!");
                 }
             } else {
                 // If wallet exists, update it
@@ -37,20 +37,20 @@ export default function CreateWallet() {
                 });
     
                 if (response.data.success) {
-                    return toast.success("Wallet updated successfully!");
+                    return alert("Wallet updated successfully!");
                 } else {
-                    toast.error("Failed to update wallet.");
+                    alert("Failed to update wallet.");
                 }
             }
         } catch (error) {
             console.error("Error during wallet submission:", error.message);
-            toast.error(error.response?.data?.message || "An unexpected error occurred.");
+            alert(error.response?.data?.message || "An unexpected error occurred.");
         }
     }
     
     
     return (
-        <form className="flex flex-col border message shadow-xl rounded" >
+        <form className="flex flex-col border message shadow-xl rounded w-full" >
             <label className="mt-4 mx-4">Wallet Name</label>
             <input className="mt-4 mx-4 border rounded-sm py-2 px-1" placeholder="Client email address" onChange={(e) => setName(e.target.value)} />
             <label className="mt-4 mx-4">Address</label>

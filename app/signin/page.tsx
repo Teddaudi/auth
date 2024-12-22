@@ -25,7 +25,7 @@ const Page = () => {
       if (!userData.data.user.isAdmin) {
         router.push('/home');
       } else {
-        router.push('/admin/dashboard');
+        router.push('/admin-dashboard');
       }
 
       alert("Login successful");

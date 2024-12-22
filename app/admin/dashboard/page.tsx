@@ -332,7 +332,7 @@ const Page = () => {
     return (
         <>
             <Header />
-            <div className="h-[calc(100vh-120px)] w-full absolute top-14">
+            <div className="h-[calc(100vh-120px)] w-full absolute top-14  max-w-[1200px]">
                 <section id="content" className="w-[100wh-60px] lg:w-[100wh-250px] ml-[] lg:ml-[] p-5 right-0 transition-all duration-500 ease-in-out">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols">
                         <div className="bg-slate-50 p-5 m-2 rounded-md flex justify-between items-center shadow">
@@ -359,10 +359,28 @@ const Page = () => {
                             <FaUsers size={30} color='orange' />
                         </div>
                     </div>
+                    <div className="flex flex-col space-y-4 items-center">
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
+                            onClick={handleMessage}
+                        >
+                            Create Message
+                        </button>
+                        {message && <SendMessages />}
+
+                        <button
+                            className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
+                            onClick={handleWallet}
+                        >
+                            Create Wallet
+                        </button>
+                        {wallet && <CreateWallet />}
+                    </div>
                     <Toaster />
                     <div className="grid grid-cols-1 gap-2 p-4 lg:grid-cols-2">
-                        <div className="overflow-x-auto m-2 shadow-md ">
-                            <table className="w-full">
+
+                        <div className=" m-2 shadow-md mx-4 border-2">
+                            <table className="w-full border-2 overflow-x-hidden rounded-lg">
                                 <thead className="bg-gray-100">
                                     <tr>
                                         <th className="text-left p-3">Name</th>
@@ -410,64 +428,44 @@ const Page = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-
                             </table>
                         </div>
-                        <div className="flex flex-col space-y-4 items-center">
-                            <button
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
-                                onClick={handleMessage}
-                            >
-                                Create Message
-                            </button>
-                            {message && <SendMessages />}
 
-                            <button
-                                className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105"
-                                onClick={handleWallet}
-                            >
-                                Create Wallet
-                            </button>
-                            {wallet && <CreateWallet />}
+                    </div>
+                    <div className="flex flex-col items-center space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
+                        <div className="flex flex-col items-center">
+                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Front ID</h2>
+                            {frontIdBase64 ? (
+                                <img
+                                    src={`data:image/png;base64,${frontIdBase64}`}
+                                    alt="Front ID"
+                                    className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
+                                />
+                            ) : (
+                                <p className="text-sm text-gray-500 italic">Loading Front Image...</p>
+                            )}
                         </div>
 
-                        <div className="flex flex-col items-center space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
-                            <div className="flex flex-col items-center">
-                                <h2 className="text-lg font-semibold text-gray-700 mb-2">Front ID</h2>
-                                {frontIdBase64 ? (
-                                    <img
-                                        src={`data:image/png;base64,${frontIdBase64}`}
-                                        alt="Front ID"
-                                        className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
-                                    />
-                                ) : (
-                                    <p className="text-sm text-gray-500 italic">Loading Front Image...</p>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col items-center">
-                                <h2 className="text-lg font-semibold text-gray-700 mb-2">Back ID</h2>
-                                {backIdBase64 ? (
-                                    <img
-                                        src={`data:image/png;base64,${backIdBase64}`}
-                                        alt="Back ID"
-                                        className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
-                                    />
-                                ) : (
-                                    <p className="text-sm text-gray-500 italic">Loading Back Image...</p>
-                                )}
-                            </div>
-
-                            {/* Approve Button */}
-                            <button
-                                onClick={() => handleApproval(userId)}
-                                className="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                            >
-                                Approve Verification
-                            </button>
+                        <div className="flex flex-col items-center">
+                            <h2 className="text-lg font-semibold text-gray-700 mb-2">Back ID</h2>
+                            {backIdBase64 ? (
+                                <img
+                                    src={`data:image/png;base64,${backIdBase64}`}
+                                    alt="Back ID"
+                                    className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
+                                />
+                            ) : (
+                                <p className="text-sm text-gray-500 italic">Loading Back Image...</p>
+                            )}
                         </div>
 
-
+                        {/* Approve Button */}
+                        <button
+                            onClick={() => handleApproval(userId)}
+                            className="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        >
+                            Approve Verification
+                        </button>
                     </div>
                 </section>
             </div>

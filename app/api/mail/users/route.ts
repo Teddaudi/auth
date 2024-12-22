@@ -17,7 +17,7 @@ export async function POST(request:NextRequest) {
                 secure: true,
                 auth: {
                     user: "admin@ezracapitaltrades.com",
-                    pass: "o%ZoG-yD6buh"
+                    pass: "Ezra@2024"
                 }
             });
 

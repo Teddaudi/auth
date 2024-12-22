@@ -10,24 +10,24 @@ export default function SendMessages() {
     const [message, setMessage] = useState("")
     async function handleSubmit() {
         try {
-            if(!email || !subject || !message){
-                return toast.error("Provide all neccessary details!")
+            if (!email || !subject || !message) {
+                return alert("Provide all neccessary details!")
             }
             const response = await axios.post("/api/mail/users", {
                 email: email, userSubject: subject, userMessage: message
             })
-            if(response.data.status === "success"){
-                return toast.success("Mail delivered successfully!")
-            }else{
-                toast.error("Mail not delivered!")
+            if (response.data.status === "success") {
+                return alert("Mail delivered successfully!")
+            } else {
+                alert("Mail not delivered!")
             }
             // console.log("message:", { response })
         } catch (error) {
-            console.log(error.message)
+            alert(error.message)
         }
     }
     return (
-        <form className="flex flex-col border message shadow-xl rounded" >
+        <form className="flex flex-col border message shadow-xl rounded w-full" >
             <label className="mt-4 mx-4">Client Email address</label>
             <input className="mt-4 mx-4 border rounded-sm py-2 px-1" placeholder="Client email address" onChange={(e) => setEmail(e.target.value)} />
             <label className="mt-4 mx-4">Subject</label>
