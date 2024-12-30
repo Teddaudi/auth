@@ -26,10 +26,10 @@ const AdminNavbar = () => {
     setLoading(true); // Set loading to true at the start of the request
     try {
       await axios.get('/api/users/logout');
-      toast.success('Logout successful');
+      alert('Logout successful');
       router.push('/signin');
     } catch (error: any) {
-      toast.error(error.message);
+      alert(error.message);
     } finally {
       setLoading(false); // Stop loading when the request completes
     }

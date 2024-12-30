@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const data = await req.formData();
     const frontFile = data.get('file[0]') as File | null;
     const backFile = data.get('file[1]') as File | null;
-    // console.log({ frontFile, backFile })
+    console.log({ frontFile, backFile })
     if (!frontFile || !backFile) {
       return NextResponse.json({ error: "Both front and back images are required." }, { status: 400 });
     }
@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
       userId,
       {
         $set: {
-          frontIdImage: frontImageBuffer,
-          backIdImage: backImageBuffer,
+          "images.frontIdImage": frontImageBuffer,
+          "images.backIdImage": backImageBuffer,
         },
       },
       { new: true }
