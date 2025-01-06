@@ -8,40 +8,40 @@ const Withdraw = () => {
   const balance = data?.investment
   const [address, setAddress] = useState("")
   const [amount, setAmount] = useState("")
- 
+
   async function withdrawInit() {
     if (!address) {
       console.log("Please enter a valid wallet address!");
       return;
     }
-  
+
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       console.log("Please enter a valid amount!");
       return;
     }
-  
+
     if (Number(amount) > balance) {
       console.log("Insufficient funds!");
       return;
     }
-  
+
     try {
       // Deducting balance locally
       const totalWithdrawal = balance - Number(amount);
-  
-      // Initiating withdrawal
-      const initWith = await axios.put('/api/users/withdrawal', {
+
+      // Initiating withdrawa l
+      await axios.put('/api/users/withdrawal', {
         withdrawal: amount,
       });
-      // console.log("Withdrawal initialized:", initWith.data);
+
       alert("Withdrawal successful!");
-  
-    } catch (error:any) {
+
+    } catch (error: any) {
       // console.error("Error during withdrawal:", error.message);
       alert("An error occurred while processing your withdrawal. Please try again.");
     }
   }
-  
+
   return (
     <div className="max-w-[400px] w-full mx-auto p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Withdraw Funds</h2>

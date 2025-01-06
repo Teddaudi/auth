@@ -12,41 +12,6 @@ export default function DashboardLayout({ children }) {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true); // Track loading state
 
-  // const fetchData = async () => {
-  //   try {
-  //     const res = await axios.get('/api/users/me');
-  //     const userData = res.data.data;
-  //     setData(userData);
-  //     setLoading(false); // Data fetched, stop loading
-  //   } catch (error) {
-  //     setLoading(false); // Stop loading even in case of error
-  //     if (error.response) {
-  //       const statusCode = error.response.status;
-  //       // Handle specific HTTP error status codes
-  //       switch (statusCode) {
-  //         case 400:
-  //           console.error("Bad Request - Invalid data provided.");
-  //           break;
-  //         case 401:
-  //           console.error("Unauthorized - Please log in.");
-  //           break;
-  //         case 403:
-  //           console.error("Forbidden - You do not have permission.");
-  //           break;
-  //         case 404:
-  //           console.error("User data not found.");
-  //           break;
-  //         case 500:
-  //           console.error("Internal Server Error - Try again later.");
-  //           break;
-  //         default:
-  //           console.error(`Unexpected error occurred: ${statusCode}`);
-  //       }
-  //     } else {
-  //       console.error("Network error or unknown error:", error.message);
-  //     }
-  //   }
-  // };
   const fetchData = async (retryCount = 3) => {
     try {
       const res = await axios.get('/api/users/me');

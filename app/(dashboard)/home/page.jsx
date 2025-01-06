@@ -5,13 +5,13 @@ import UserCalendar from '../../components/UserClient';
 import Deposit from '../../components/Deposit';
 import Trade from '../../components/Trade';
 import { useUser } from '../../util/context/context';
+import Link from 'next/link';
 
 const Home = () => {
   const [loading, setLoading] = useState(true); // Track loading state
   const data = useUser();
   const [access, setAccess] = useState(true);
-// console.log(data.withdrawals)
-  // Check access when the component mounts or `data` changes
+
   useEffect(() => {
     if (!data) {
       setAccess(false);
@@ -31,9 +31,11 @@ const Home = () => {
             >
               X
             </button>
-            <div className="flex justify-center items-center h-full">
-              Your access token has expired. Please login again!
-            </div>
+            <Link href={'/signin'}>
+              <div className="flex justify-center items-center h-full">
+                Your access token has expired. Please login again!
+              </div>
+            </Link>
           </div>
         )}
 

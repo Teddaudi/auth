@@ -4,17 +4,17 @@ import { useUser } from "../../../util/context/context";
 
 const Transactions = () => {
   const data: any = useUser();
-  const transactions = data?.withdrawals || []; // Safely access withdrawals or default to an empty array
-
+  // const transactions = data?.withdrawals || []; // Safely access withdrawals or default to an empty array
+  const transaction = data?.transactions || [];
   return (
     <div className="bg-white p-6 rounded-lg shadow-md flex-1 m-4 mt-0">
       <div className="mt-6">
         <h2 className="text-xl font-bold text-gray-900 border-b pb-2 mb-6">
           Withdrawal History
         </h2>
-        {transactions.length > 0 ? (
+        {transaction.length > 0 ? (
           <ul className="space-y-4">
-            {transactions.map((transaction: any, index: number) => (
+            {transaction.map((transaction: any, index: number) => (
               <li
                 key={index}
                 className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50 hover:bg-gray-100 transition duration-300 ease-in-out rounded-lg px-5 py-4 shadow-sm border"

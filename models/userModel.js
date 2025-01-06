@@ -65,7 +65,26 @@ const userSchema = new mongoose.Schema({
     withdrawals: {
         type: [String], 
         default: [], 
-    }
+    },
+    transactions: {
+        type: [
+            {
+                amount: {
+                    type: String,
+                    required: true, // Ensures amount is provided
+                },
+                status: {
+                    type: String,
+                    default: "pending", // Default value for each withdrawal's status
+                },
+                date: {
+                    type: Date,
+                    default: Date.now, // Tracks when the withdrawal was made
+                }
+            }
+        ],
+        default: [],
+    },
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
